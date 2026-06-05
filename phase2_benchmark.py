@@ -40,107 +40,107 @@ load_dotenv(dotenv_path=ROOT / ".env", override=False)
 
 DOCUMENT_CATALOG: list[dict[str, Any]] = [
     {
-        "path": "customer_support_playbook.txt",
-        "category": "support",
+        "path": "paper_I_random_matrix.txt",
+        "category": "statistics",
         "language": "en",
-        "doc_type": "playbook",
-        "audience": "internal",
+        "doc_type": "preprint",
+        "topic": "random_matrix",
     },
     {
-        "path": "python_intro.txt",
-        "category": "technical",
+        "path": "paper_II_weak_iv_estimators.txt",
+        "category": "econometrics",
         "language": "en",
-        "doc_type": "tutorial",
-        "audience": "public",
+        "doc_type": "preprint",
+        "topic": "instrumental_variables",
     },
     {
-        "path": "vector_store_notes.md",
-        "category": "technical",
+        "path": "paper_III_sir_seir_identifiability.txt",
+        "category": "epidemiology",
         "language": "en",
-        "doc_type": "notes",
-        "audience": "public",
+        "doc_type": "preprint",
+        "topic": "compartmental_models",
     },
     {
-        "path": "rag_system_design.md",
-        "category": "technical",
+        "path": "paper_IV_krylov_preconditioners.txt",
+        "category": "numerical_methods",
         "language": "en",
-        "doc_type": "design",
-        "audience": "internal",
+        "doc_type": "preprint",
+        "topic": "sparse_linear_systems",
     },
     {
-        "path": "chunking_experiment_report.md",
-        "category": "technical",
+        "path": "paper_V_gard_lora.txt",
+        "category": "machine_learning",
         "language": "en",
-        "doc_type": "report",
-        "audience": "internal",
+        "doc_type": "preprint",
+        "topic": "parameter_efficient_finetuning",
     },
     {
-        "path": "vi_retrieval_notes.md",
-        "category": "technical",
-        "language": "vi",
-        "doc_type": "notes",
-        "audience": "internal",
+        "path": "paper_VI_lace_exploration.txt",
+        "category": "reinforcement_learning",
+        "language": "en",
+        "doc_type": "preprint",
+        "topic": "exploration",
     },
 ]
 
 BASELINE_DOCS = [
-    "customer_support_playbook.txt",
-    "chunking_experiment_report.md",
-    "vi_retrieval_notes.md",
+    "paper_I_random_matrix.txt",
+    "paper_III_sir_seir_identifiability.txt",
+    "paper_V_gard_lora.txt",
 ]
 
 BENCHMARK_QUERIES: list[dict[str, Any]] = [
     {
         "id": 1,
-        "query": "What should support articles avoid writing?",
+        "query": "What is MPCX and what finite-dimensional correction problem does it study?",
         "gold_answer": (
-            "Support articles should avoid vague statements such as "
-            "'check the settings' or 'contact engineering if needed.' "
-            "They should specify the exact page, button, or log source."
+            "MPCX is a computational framework that compares finite-dimensional corrections "
+            "to the Marchenko-Pastur law for Gaussian Wishart matrices, evaluating bulk-sensitive "
+            "and edge-sensitive strategies for dimensions from 50 to 5000."
         ),
-        "expected_source": "customer_support_playbook",
+        "expected_source": "paper_I_random_matrix",
         "filter": None,
     },
     {
         "id": 2,
-        "query": "What is the proposed architecture for the RAG system?",
+        "query": "Which IV estimators formed the lowest-loss cluster in the IVX benchmark?",
         "gold_answer": (
-            "Ingestion chunks documents and stores segments with metadata; "
-            "retrieval embeds questions and applies optional metadata filters; "
-            "the application layer builds a prompt from top retrieved chunks."
+            "LIML, Fuller(1), and Fuller(4) formed a tightly clustered low-loss group "
+            "(metrics around 0.84), while 2SLS and JIVE had much larger losses."
         ),
-        "expected_source": "rag_system_design",
+        "expected_source": "paper_II_weak_iv_estimators",
         "filter": None,
     },
     {
         "id": 3,
-        "query": "Which chunking strategy performed best in the experiment?",
+        "query": "What is PRIM and what identifiability diagnostics does it compare for epidemic models?",
         "gold_answer": (
-            "Recursive chunking offered the best balance: it preserved context "
-            "while staying within the target size range."
+            "PRIM benchmarks structural and practical identifiability for SIR and SEIR models "
+            "using profile likelihood, Fisher Information diagnostics, and maximum-likelihood "
+            "estimation on synthetic outbreaks."
         ),
-        "expected_source": "chunking_experiment_report",
+        "expected_source": "paper_III_sir_seir_identifiability",
         "filter": None,
     },
     {
         "id": 4,
-        "query": "Metadata giúp retrieval tránh nhầm tài liệu như thế nào?",
+        "query": "How does GARD allocate LoRA ranks using gradient spectral analysis?",
         "gold_answer": (
-            "Metadata (phòng ban, ngôn ngữ, độ nhạy cảm, ngày cập nhật) giúp "
-            "lọc tài liệu phù hợp, ví dụ tránh lấy marketing hoặc tài liệu tiếng Anh "
-            "khi hỏi về tài liệu kỹ thuật tiếng Việt."
+            "GARD estimates per-layer gradient covariance spectra, derives an effective "
+            "dimensionality signal, and maps it to discrete LoRA ranks under a fixed global "
+            "adapter parameter budget."
         ),
-        "expected_source": "vi_retrieval_notes",
-        "filter": {"language": "vi"},
+        "expected_source": "paper_V_gard_lora",
+        "filter": {"category": "machine_learning"},
     },
     {
         "id": 5,
-        "query": "What are the four stages of a vector search pipeline?",
+        "query": "Which Krylov preconditioners were compared on sparse linear systems?",
         "gold_answer": (
-            "Chunk documents, embed each chunk, store the vector and metadata, "
-            "then embed the query and rank stored vectors by similarity."
+            "The study compares Jacobi, SSOR, ILU, and AMG preconditioners with Krylov solvers "
+            "such as CG, GMRES, and BiCGSTAB on structured and unstructured sparse systems."
         ),
-        "expected_source": "vector_store_notes",
+        "expected_source": "paper_IV_krylov_preconditioners",
         "filter": None,
     },
 ]
@@ -210,7 +210,7 @@ def load_source_documents() -> list[Document]:
                     "category": entry["category"],
                     "language": entry["language"],
                     "doc_type": entry["doc_type"],
-                    "audience": entry["audience"],
+                    "topic": entry.get("topic", entry["category"]),
                 },
             )
         )
@@ -447,6 +447,12 @@ def main() -> int:
         default=os.getenv("PHASE2_EMBEDDER", "local"),
         help="Embedding backend for retrieval benchmark (default: local MiniLM).",
     )
+    parser.add_argument(
+        "--my-strategy",
+        choices=list(STRATEGIES.keys()),
+        default=os.getenv("PHASE2_MY_STRATEGY", "fixed_size_300"),
+        help="Personal chunking strategy for report export (default: fixed_size_300).",
+    )
     args = parser.parse_args()
 
     embedder, embedder_name = resolve_embedder(args.embedder)
@@ -495,7 +501,7 @@ def main() -> int:
             )
 
     best_strategy = max(strategy_results.values(), key=lambda item: item["relevant_top3"])
-    my_strategy = strategy_results["recursive_300"]
+    my_strategy = strategy_results[args.my_strategy]
 
     payload = {
         "embedder": embedder_name,
@@ -514,13 +520,13 @@ def main() -> int:
         "similarity_predictions": similarity_rows,
         "strategy_results": strategy_results,
         "best_strategy": best_strategy["strategy"],
-        "my_strategy": "recursive_300",
+        "my_strategy": args.my_strategy,
         "benchmark_queries": BENCHMARK_QUERIES,
     }
 
     print_section("PHASE 2 — SUMMARY")
     print(f"Best retrieval strategy: {best_strategy['strategy']} ({best_strategy['relevant_top3']}/5)")
-    print(f"My chosen strategy: recursive_300 ({my_strategy['relevant_top3']}/5)")
+    print(f"My chosen strategy: {args.my_strategy} ({my_strategy['relevant_top3']}/5)")
 
     if args.export:
         export_path = Path(args.export)

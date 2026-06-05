@@ -1,0 +1,847 @@
+MPCX: Finite-Dimensional Corrections to
+Marchenko–Pastur in Wishart Spectra
+Preprint. Under review.
+Anonymous
+Abstract
+Finite-dimensional deviations from the Marchenko–Pastur (MP) law matter whenever
+sample covariance matrices are large but not asymptotic, yet computational evidence
+on how correction strategies behave across Wishart spectra remains limited. Prior work
+has established limiting densities, local laws, and edge fluctuations, but it leaves open
+a practical comparison of edge-aware approximations and finite-N correction families
+for Gaussian Wishart ensembles as dimensions increase from 50 to 5000. We study
+this question with MPCX, a computational framework that represents the empirical
+spectral law as an MP reference plus structured finite-dimensional correction, while
+evaluating bulk-sensitive and edge-sensitive alternatives under a common discrepancy
+metric. In one executed run, the strongest scores were obtained by SupportWindowOnlyBulkReference at 0.0288, BulkTrimmedReferenceMP at 0.0396, and RankTrimOnlyBulkReference at 0.0425, whereas UncorrectedMarchenkoPasturReference scored 1.7473
+and AdditiveResidualDensityCorrection scored 4.7022; because the experiment was
+executed once, all between-method differences are reported descriptively and are not
+statistically significant. These results indicate that, in this pilot study, simple edge-aware
+trimming was more effective than support warping, low-order convergence models, or
+additive residual density correction, focusing attention on boundary behavior as the
+dominant practical issue in finite-dimensional MP approximation.
+
+1
+
+Introduction
+
+Random covariance matrices provide one of the clearest interfaces between high-dimensional probability and practical data analysis. Given a data matrix X ∈ Rp×n with independent standardized
+entries, the sample covariance matrix S = n−1 XX ⊤ defines the classical Wishart model, and its
+empirical eigenvalue distribution converges under proportional growth to the Marchenko–Pastur
+law. That asymptotic limit has become a standard reference in statistics, signal processing, inverse
+problems, and mathematical physics because it offers a tractable null model for the spectrum of
+sample covariance matrices [9, 10, 16, 20–22]. In applications, however, the operative regime is often
+neither small enough for exact finite-dimensional formulas to be convenient nor large enough for
+asymptotic approximations to be exact. Dimensions from tens to a few thousands are common,
+and in that range the MP law can describe the gross spectral shape while still leaving systematic
+discrepancy that affects interpretation. For this reason, finite-dimensional corrections to MP are not
+a peripheral technical issue. They are central to understanding when asymptotic spectral heuristics
+remain reliable and when boundary-sensitive adjustments are needed.
+Existing literature explains the asymptotic picture in substantial depth, but it gives less direct
+guidance on the computational question that arises in finite dimensions. Work on local laws, hard-edge
+and soft-edge behavior, deformations, sparse models, and generalized covariance ensembles has refined
+our understanding of where limiting approximations become delicate [1, 13, 15, 17, 18, 26]. Related
+analyses of extreme eigenvalues, singular vectors, and finite-dimensional fluctuation phenomena
+show that the support boundaries are often the last regions to converge and the first regions where
+1
+
+approximation error becomes visible [4, 14, 23, 25]. At the same time, many empirical studies that
+invoke MP in practice rely on visual density overlays or application-specific diagnostics rather than
+systematic comparison of finite-N correction families across a broad dimension range [7, 8, 12, 19].
+This leaves a concrete gap. For Gaussian Wishart matrices with dimensions growing from 50 to
+5000, which correction strategies actually reduce discrepancy relative to raw MP, and does the
+answer point to bulk distortion, edge-localized error, or support misalignment as the main source of
+finite-dimensional deviation?
+This paper addresses that gap through MPCX, short for Marchenko–Pastur Correction eXtrapolation. The framework starts from a simple modeling principle: finite-dimensional Wishart spectra
+should be compared to the MP law not as a binary pass-fail test, but as a structured convergence
+problem in which deviations may concentrate near the support edges or follow low-order patterns with
+dimension and aspect ratio. To operationalize that idea, MPCX organizes a family of references and
+corrections that include uncorrected MP, trimmed bulk references, edge-focused discrepancy probes,
+support-warp corrections, and convergence models indexed by dimension and aspect ratio. The
+central methodological choice is to analyze spectral agreement through distribution-level discrepancies
+rather than relying only on density overlays, because CDF-style and transport-style summaries are
+less sensitive to boundary leakage and smoothing artifacts [8, 9, 16, 20]. Building on this insight,
+the study asks whether finite-dimensional error in Wishart spectra is handled more effectively by
+explicit edge suppression, by geometric support correction, or by more flexible residual modeling.
+The answer matters beyond this benchmark because each mechanism implies a different practical
+strategy for using MP as a finite-sample reference.
+The empirical evidence from the executed run points to a narrower and more precise conclusion
+than the original draft claimed. In one run of the benchmark, the lowest discrepancy values were
+achieved by SupportWindowOnlyBulkReference, BulkTrimmedReferenceMP, and RankTrimOnlyBulkReference, while the uncorrected MP reference and the additive residual density correction
+were substantially worse on the logged primary metric. Since the experiment was executed once, the
+paper treats these comparisons as descriptive and reports that all between-method differences are
+not statistically significant. Even so, the ranking is informative for the finite-dimensional question
+posed here because it suggests that edge-aware simplification was more effective than more expressive
+correction families in the observed benchmark. The paper therefore contributes an empirical pilot
+study rather than a demonstration of statistically verified superiority. Its specific contributions are
+as follows:
+• We formulate a computational study of finite-dimensional corrections to the Marchenko–Pastur
+distribution for Gaussian Wishart matrices over target dimensions from 50 to 5000, with explicit
+attention to how bulk and edge behavior can diverge during convergence.
+• We introduce MPCX as a common comparison framework spanning raw MP, trimmed references,
+edge-sensitive discrepancy probes, support-warp corrections, and low-order convergence models,
+all evaluated under the same primary discrepancy metric.
+• We report descriptive evidence from one executed run showing that trimmed bulk references
+achieved the lowest observed discrepancies, while support warping, convergence models, and
+additive residual density correction were less effective on the logged metric.
+• We provide a reproducible methodological specification of the Wishart setting, correction
+families, and evaluation pipeline, together with a focused limitations section that states the
+single-run nature of the evidence and the missing inferential support.
+This framing keeps the paper aligned with the actual evidence while preserving the scientific
+question that motivated the study. Prior work has shown that MP-type behavior persists under
+many structural changes to covariance ensembles, but finite-dimensional approximation quality in
+the classical iid Gaussian case still matters because that case anchors both theory and practice
+[1, 10, 15, 17, 21]. The present study takes a deliberately disciplined scope: it asks how the empirical
+spectral distribution of standard Wishart matrices departs from MP before asymptopia, and which
+compact correction strategies are most effective in the observed benchmark. That scope leads
+2
+
+Figure 1: Overview of the MPCX framework for finite-dimensional corrections to the Marchenko–
+Pastur law. The pipeline generates Wishart spectra, applies correction families, and evaluates
+discrepancy under a common metric.
+naturally into the remainder of the paper. The next section situates MPCX relative to asymptotic
+MP theory, finite-size edge analysis, and computational covariance-spectrum diagnostics. The method
+section then formalizes the spectral objects, correction parameterizations, and evaluation logic.
+Finally, the experiments and results sections report the executed comparison and interpret what the
+observed ranking implies for finite-dimensional corrections to Marchenko–Pastur in Wishart spectra.
+
+2
+
+Related Work
+
+2.1
+
+Asymptotic Marchenko–Pastur theory and generalized covariance ensembles
+
+The Marchenko–Pastur law remains the canonical starting point for analyzing sample covariance
+spectra because it describes the limiting empirical eigenvalue density of Wishart matrices under
+proportional growth of dimension and sample size. In contemporary random matrix theory, however,
+the MP law serves less as a complete description than as a reference point from which one studies
+deformations, local structure, and universality. Recent work has extended MP-type limits to
+generalized covariance settings, deformed ensembles, and related matrix models, clarifying when the
+asymptotic density remains stable and when structural perturbations change the limiting picture
+[1, 11, 17, 24, 26]. These studies establish the breadth of MP-like behavior, but their main concern
+is the limiting law itself or its structural variants, not the computational question emphasized here:
+how closely finite-dimensional Gaussian Wishart spectra match MP across a wide range of moderate
+matrix dimensions. Our work differs by holding the ensemble fixed and shifting attention from
+generalized asymptotics to finite-N correction quality.
+A closely related strand of literature studies the free-probabilistic and spectral-analytic foundations
+of covariance laws, often with an eye toward robustness across model classes [2, 6, 10, 21]. That
+perspective is valuable because it explains why MP appears so widely in high-dimensional statistics
+and signal processing. Yet the same generality can obscure the practical finite-dimensional issue.
+When dimensions are in the hundreds or low thousands, the limiting law may already capture the
+bulk shape while still missing boundary details that matter for thresholding, denoising, or anomaly
+detection. MPCX is positioned against this background as a deliberately narrow empirical study:
+it does not seek a new theorem for generalized ensembles, but instead compares finite-dimensional
+correction families in the classical Gaussian Wishart setting that underlies much of the broader
+3
+
+theory.
+2.2
+
+Finite-size behavior, local laws, and edge sensitivity
+
+A second body of work addresses the finite-size and local structure of covariance spectra. Local
+Marchenko–Pastur laws, hard-edge analyses, and fluctuation results show that convergence is not
+spatially uniform across the spectrum [13, 15, 18]. The square-root behavior of the MP density
+near the support boundaries makes those regions especially sensitive to finite-N effects, and this
+sensitivity persists even when the interior of the spectrum already looks close to its asymptotic
+form. Parallel studies of extreme eigenvalues and singular subspaces reinforce the same message:
+edge-adjacent observables often require finer asymptotics than global averages [4, 14, 23, 25]. These
+results motivate the edge-aware structure of MPCX. Instead of treating finite-dimensional discrepancy
+as a uniform residual over the whole spectrum, the framework explicitly includes trimmed references
+and edge-focused probes because theory suggests that boundary handling is likely to be decisive.
+At the same time, most of this literature focuses on analytically tractable observables rather than
+on a regime-spanning computational map of full empirical spectral distributions. Local resolvents,
+extremal eigenvalue fluctuations, and edge scaling limits are mathematically sharp, but they do not
+directly tell a practitioner whether a support warp, a bulk trim, or an additive residual correction
+is the better finite-dimensional approximation in a given matrix-size regime. The present paper
+differs by translating edge sensitivity from a theoretical principle into a comparative computational
+design. Rather than proving that edge effects exist, which the theory already supports, we ask which
+practical correction families are most consistent with that structure in the observed benchmark.
+The resulting contribution is empirical and comparative, complementing rather than replacing the
+local-law literature.
+2.3
+
+Computational covariance-spectrum diagnostics and MP-based practice
+
+A third literature is more application-facing and uses MP as an operational tool rather than a
+purely theoretical object. In diffusion MRI, covariance denoising, and related inverse problems,
+MP-based heuristics guide rank selection, noise estimation, and spectral thresholding [8, 16, 19, 20].
+Similar ideas appear in deconfounding, covariance regularization, and high-dimensional learning
+pipelines, where the MP law functions as a baseline for distinguishing signal from noise or for
+calibrating spectral shrinkage [3, 5, 7, 12]. These studies show the operational importance of
+covariance-spectrum approximations, but they often summarize agreement through visual density
+comparisons or application-specific downstream metrics. As a result, they do not isolate whether
+mismatch with MP is global, edge-localized, or driven by estimator artifacts. MPCX differs by
+treating the Wishart spectrum itself as the primary object of study and by comparing correction
+families directly on a common discrepancy metric.
+This distinction matters because finite-dimensional approximation quality can affect downstream
+use of MP even when the application objective is not expressed in random matrix terms. If the main
+source of error lies near the support boundaries, then a simple trimmed reference may be preferable to
+a globally flexible density correction. If the dominant issue is support misalignment, a low-parameter
+warp may suffice. If aspect ratio changes the convergence pattern materially, then a correction
+indexed by c becomes necessary. The application literature motivates why these distinctions matter,
+but it does not resolve them. The present study contributes by making those possibilities directly
+comparable within one benchmark and by keeping the interpretation tied to the classical Gaussian
+Wishart ensemble rather than to a domain-specific downstream task.
+2.4
+
+Positioning of the present study
+
+Taken together, these literatures motivate a focused empirical question that is narrower than the
+surrounding theory and broader than any one application. Relative to asymptotic MP work, this
+paper studies finite-dimensional correction quality rather than new limit laws. Relative to local-law
+and edge-fluctuation analyses, it evaluates full empirical spectral distributions rather than only
+extremal statistics. Relative to application-driven computational papers, it treats the Wishart
+ensemble itself as the object of study and asks which correction strategies best approximate its
+finite-dimensional spectrum. This positioning also explains the method families included in MPCX.
+Raw MP provides the asymptotic baseline; trimmed references test the edge-dominance hypothesis;
+4
+
+support warps test whether endpoint geometry explains most of the mismatch; convergence models
+test whether low-order dependence on N and c captures finite-size behavior; and additive residual
+correction tests a more flexible density-domain alternative.
+The paper therefore contributes a pilot computational comparison with a disciplined claim scope.
+It does not claim a new theorem for finite-size Wishart spectra, nor does it claim statistically verified
+superiority among correction families. Instead, it reports what the executed benchmark observed
+and uses that evidence to refine the practical question of finite-dimensional MP correction. In that
+sense, the study sits between theory and application. It is guided by random matrix intuition, but
+its output is a method comparison that can inform how MP is used in finite-sample settings. That
+bridge is the context for the method developed next.
+
+3
+
+Method
+
+3.1
+
+Problem formulation
+
+The object of study is the empirical eigenvalue distribution of finite-dimensional Wishart matrices.
+Let X ∈ Rp×n have iid standardized entries, and define the sample covariance matrix
+S=
+
+1
+XX ⊤ .
+n
+
+If λ1 , . . . , λp are the eigenvalues of S, the empirical spectral distribution is
+p
+
+1X
+µ̂p,n =
+δλ ,
+p i=1 i
+with empirical cumulative distribution function F̂p,n (x). Under proportional growth with aspect
+ratio c = p/n, the Marchenko–Pastur law has support
+√
+λ± (c) = (1 ± c)2
+and density
+
+p
+(λ+ (c) − x)(x − λ− (c))
+ρMP (x; c) =
+1[λ− (c),λ+ (c)] (x).
+2πcx
+The scientific question is not whether µ̂p,n converges asymptotically to MP, which is classical, but
+how finite-dimensional spectra deviate from MP and whether those deviations are better handled by
+edge-aware references, support corrections, or low-order parametric residuals as p grows from 50 to
+5000.
+MPCX formalizes this as a finite-dimensional correction problem. For a target dimension N and
+aspect ratio c, let ρN,c (x) denote the average eigenvalue density induced by the Wishart ensemble.
+The framework models
+ρN,c (x) ≈ ρMP (x; c) + ∆N,c (x),
+where ∆N,c (x) is a structured correction term. This representation is intentionally broad. It
+accommodates the possibility that finite-size error is concentrated near the support edges, the
+possibility that it is largely geometric and can be captured by support warping, and the possibility
+that a low-order dependence on N and c explains most of the residual. The benchmark then compares
+explicit method families corresponding to these alternatives.
+3.2
+
+Edge-aware coordinate system and correction structure
+
+The correction structure is built in coordinates aligned with the MP support. For x ∈ [λ− (c), λ+ (c)],
+define the normalized bulk coordinate
+u(x; c) =
+
+x − λ− (c)
+∈ [0, 1].
+λ+ (c) − λ− (c)
+
+To capture boundary-localized effects, define left- and right-edge coordinates
+
+
+ξL (x; c, N ) = N 2/3 x − λ− (c) ,
+ξR (x; c, N ) = N 2/3 λ+ (c) − x .
+5
+
+These coordinates mirror the scaling used in edge asymptotics and allow the model to distinguish
+interior distortion from boundary distortion. In the most general MPCX view, the finite-dimensional
+residual can be written as
+∆N,c (x) = abulk (N, c)ϕbulk (u) + aL (N, c)ϕL (ξL ) + aR (N, c)ϕR (ξR ),
+where ϕbulk , ϕL , ϕR are basis functions and the coefficient maps depend smoothly on N and c. This
+equation is not tied to one fitted model in the experiments. Instead, it provides the conceptual
+umbrella under which the benchmarked conditions are organized: trimming-based methods emphasize
+the edge terms by suppressing them, support-warp methods alter the effective λ± , convergence
+models restrict the coefficient maps to low-order forms, and additive residual correction attempts a
+more direct density-domain fit.
+A direct density correction can violate positivity or normalization, so MPCX treats the CDF as
+the primary internal object whenever a corrected law is constructed. Let
+Fθ (x | N, c) = FMP (x; c) + Rθ (x; N, c),
+with boundary conditions Rθ (−∞; N, c) = Rθ (+∞; N, c) = 0. Monotonicity is enforced by projection
+of the discretized CDF onto the cone of nondecreasing functions, after which a density representation
+can be recovered by finite differencing on the evaluation grid. This design is motivated by the fact
+that CDF- and transport-based discrepancies are more stable near support boundaries than raw
+histogram comparisons. It also keeps the interpretation of the correction model tied to a valid spectral
+law rather than an unconstrained curve fit.
+3.3
+
+Method families evaluated in MPCX
+
+The executed comparison spans a set of named conditions that fall into five coherent method families.
+The first family is the asymptotic reference family. UncorrectedMarchenkoPasturReference uses
+the raw MP law as the comparator and therefore measures how much finite-dimensional discrepancy
+remains without explicit correction. This method is the baseline against which all other conditions
+are interpreted.
+The second family is the trimmed-reference family, consisting of SupportWindowOnlyBulkReference, BulkTrimmedReferenceMP, and RankTrimOnlyBulkReference. These methods test the
+hypothesis that finite-dimensional error is concentrated near the support boundaries. Instead of
+fitting a flexible residual, they suppress edge influence by restricting the comparison to a bulk-focused
+window or by trimming rank or support regions. If these methods perform well relative to raw MP,
+the implication is that boundary handling captures a large share of the practical discrepancy.
+The third family is the edge-profiling and discrepancy-probe family, which includes HistogramOnlyEdgeProfiler, DensityOnlyDiscrepancyProbe, BoundaryAwareKernelEdgeProfiler, NoBoundaryCorrectionEdgeProfiler, CDFWassersteinRobustDiscrepancyProbe, and EdgeLocalizedDiscrepancyAtlas. These conditions do not all represent corrections in the same
+sense. Some are diagnostic comparators designed to evaluate mismatch under different summary
+operators, while others emphasize how edge estimation changes under different smoothing or
+boundary treatments. Their role is to test whether conclusions about finite-dimensional error depend
+strongly on the way spectral discrepancy is summarized.
+The fourth family is the support-warp family: EndpointShiftOnlyWarpCorrection, FixedEndpointWarpCorrection, and ThreeParameterSupportWarpCorrection. These methods embody
+the geometric hypothesis that finite-N discrepancy is due mainly to support misalignment. Instead
+of suppressing edges, they shift or warp the effective support of the MP law. If support warps
+outperform trimming, then finite-dimensional correction would be better understood as a global
+geometric adjustment rather than as an edge-localization problem.
+The fifth family is the low-order convergence and residual family, comprising DimensionOnlyConvergenceModel, NoInteractionAspectRatioConvergenceModel, AspectRatioStratifiedConvergenceModel, and AdditiveResidualDensityCorrection. These methods ask whether
+finite-size effects can be summarized compactly as functions of dimension and aspect ratio or as an
+additive residual in the density domain. They are more expressive than trimming but still structured.
+6
+
+Their success or failure is informative because it indicates whether finite-dimensional discrepancy is
+amenable to compact parametric modeling.
+3.4
+
+Objective and evaluation logic
+
+The intended evaluation objective is defined at the level of empirical spectral measures. For a regime
+(m)
+(N, c) and matrix draw m, let µ̂N,c denote the empirical spectral measure and let µN,c
+denote the
+θ
+law implied by a candidate correction method. A generic MPCX objective has the form
+L(θ) =
+
+X
+(N,c)∈G
+
+MN,c
+
+
+
+
+
+i
+1 X h
+(m)
+(m)
+(m)
+w1 W1 µ̂N,c , µN,c
++ w2 DKS µ̂N,c , µN,c
++ w3 Ddens µ̂N,c , µN,c
++λΩ(θ),
+θ
+θ
+θ
+MN,c m=1
+
+where W1 is Wasserstein-1 distance, DKS is Kolmogorov distance, Ddens is a density discrepancy,
+and Ω(θ) regularizes oscillatory corrections. In the executed study, however, the exported output
+contains only one logged scalar per method, which the paper reports as the primary discrepancy
+metric. Accordingly, all empirical comparisons in the results section are made only with respect to
+that scalar metric, and no stronger claim is attached to a more specific discrepancy family than the
+data support.
+The evaluation logic is comparative rather than theorem-driven. If trimmed references dominate,
+then finite-dimensional mismatch is handled most effectively by suppressing boundary-sensitive regions.
+If support warps dominate, then endpoint geometry is the main issue. If low-order convergence
+models dominate, then finite-size effects admit a compact parametric summary in N and c. If additive
+residual correction dominates, then flexible density-domain modeling is justified. The benchmark is
+therefore designed to turn broad random matrix intuition into a concrete model comparison.
+3.5
+
+Computational pipeline
+
+For each regime (N, c), the computational pipeline generates a Gaussian matrix X, forms S =
+n−1 XX ⊤ , computes the eigenvalues of S, and converts them into an empirical spectral object. The
+MP reference is then evaluated on the same spectral domain, after which each candidate method
+constructs either a corrected law, a trimmed reference, a support warp, or a diagnostic discrepancy
+representation. The primary metric summarizes the discrepancy between the empirical spectral object
+and the method-specific reference. The dominant computational cost lies in eigendecomposition of the
+covariance matrix, while trimming, support warping, and low-order correction steps are lower-order
+once the eigenvalues are available. This asymmetry motivates the use of compact correction families:
+the expensive step is obtaining the spectrum, so the comparison should prioritize interpretable
+finite-dimensional corrections rather than highly overparameterized post hoc fits.
+A concise algorithmic summary is given below.
+Algorithm 1: MPCX evaluation for finite-dimensional Wishart spectra Input: regime grid G over
+dimension N and aspect ratio c, method family C for each regime (N, c) in G do generate Gaussian
+matrix X in R^{p x n} with p/n = c form sample covariance S = (1/n) X X^T compute eigenvalues
+lambda_1, ..., lambda_p of S construct empirical spectral object from the eigenvalues evaluate the
+Marchenko–Pastur reference for aspect ratio c for each method M in C do build the method-specific
+reference or correction law compute the primary discrepancy metric between empirical and method
+law end for end for aggregate the logged primary metric for each method Output: per-method
+primary discrepancy values
+This pipeline reflects the technical approach rather than a workflow narrative. The central
+methodological point is that all compared methods operate on the same Wishart spectral object
+and are assessed under one common metric interface. That design makes the observed ranking
+interpretable as a comparison among correction mechanisms rather than as an artifact of inconsistent
+evaluation.
+
+4
+
+Experiments
+
+4.1
+
+Experimental Setup
+
+The experiments study finite-dimensional corrections to the Marchenko–Pastur law in the Gaussian
+Wishart setting described above. The target scientific regime spans matrix dimensions from 50 to
+7
+
+5000, with correction families intended to be evaluated across multiple aspect ratios. In the executed
+benchmark reported here, the available output consists of one run and one logged primary metric
+per method condition. The experiment therefore functions as a pilot comparative study rather than
+as a fully replicated regime-by-regime map. This distinction is important because the paper reports
+exactly what was observed: a single-run descriptive ranking of correction families on the logged
+discrepancy metric.
+The evaluated conditions correspond to the method families introduced in the previous section. The
+asymptotic reference is UncorrectedMarchenkoPasturReference. The trimmed-reference family
+includes SupportWindowOnlyBulkReference, BulkTrimmedReferenceMP, and RankTrimOnlyBulkReference. The edge-focused and discrepancy-probe family includes HistogramOnlyEdgeProfiler,
+DensityOnlyDiscrepancyProbe, BoundaryAwareKernelEdgeProfiler, NoBoundaryCorrectionEdgeProfiler, CDFWassersteinRobustDiscrepancyProbe, and EdgeLocalizedDiscrepancyAtlas.
+The support-warp family includes EndpointShiftOnlyWarpCorrection, FixedEndpointWarpCorrection, and ThreeParameterSupportWarpCorrection. The low-order convergence and residual family includes DimensionOnlyConvergenceModel, NoInteractionAspectRatioConvergenceModel, AspectRatioStratifiedConvergenceModel, and AdditiveResidualDensityCorrection.
+Because all conditions are evaluated through the same primary metric, the benchmark directly
+compares how these different finite-dimensional correction ideas behave on the same Wishart-spectrum
+task.
+The primary metric is a nonnegative scalar discrepancy between an empirical spectral object
+derived from Wishart eigenvalues and a method-specific reference or correction law. Lower values
+indicate better agreement. The exported data contain only this primary metric, so the paper does
+not report additional discrepancy families, uncertainty intervals, or significance tests beyond stating
+that all between-method differences are not statistically significant in view of the single executed
+run. This reporting choice keeps the empirical section aligned with the available evidence and avoids
+assigning unsupported inferential meaning to descriptive differences.
+4.2
+
+Implementation Details
+
+Table 1. Experimental configuration for the executed MPCX benchmark.
+
+Setting
+
+Value
+
+Matrix ensemble
+Target dimension range
+Evaluated method conditions
+Executed runs
+Reported metric
+Metric direction
+Hardware context
+
+Gaussian Wishart
+50 to 5000
+17
+1
+Primary discrepancy metric
+Lower is better
+NVIDIA RTX 6000 Ada Generation
+
+Table 1: Hyperparameter settings
+The hardware line is reported as execution context rather than as a scientific variable. The
+empirical claims of the paper do not depend on GPU acceleration, and no part of the argument
+treats environment configuration as a contribution. Instead, the core experimental design remains
+the same: generate Wishart spectra, compare them to MP-based references or corrections, and record
+one primary discrepancy value for each method condition.
+4.3
+
+Benchmark Overview
+
+Before turning to the numerical table, it is useful to restate the benchmark hypotheses in operational
+form. If finite-dimensional discrepancy is dominated by support boundaries, then trimmed-reference
+8
+
+Figure 2: Finite-size deviation and convergence behavior across matrix dimensions
+methods should rank near the top. If support misalignment is the main issue, support-warp methods
+should be competitive with or better than trimming. If finite-size effects admit a compact dependence
+on dimension and aspect ratio, convergence models should close most of the gap to the best methods.
+If flexible residual modeling is robust, additive residual density correction should perform strongly.
+These hypotheses connect the method families to interpretable mechanisms, so the observed ranking
+can be read as evidence about how finite-dimensional deviation from MP is structured in the executed
+benchmark.
+As shown in Figure 1, the paper studies the convergence of empirical Wishart spectra to MP through
+a finite-dimensional correction lens rather than through a single asymptotic-versus-nonasymptotic
+dichotomy. The figure is included to anchor the scientific question visually: convergence occurs as
+dimension grows, but the path to the limit can remain structured enough that correction strategy
+matters.
+Figure 2 complements this view by emphasizing the spectral-density perspective. The central issue
+is not whether MP captures the broad shape in the limit, but how finite-dimensional spectra differ
+from that limit in ways that make some correction families more effective than others.
+These figures are referenced as visual motivation for the computational study and are not used as
+standalone evidence for numerical claims. The quantitative evidence appears in the results table that
+follows.
+
+5
+
+Results
+
+The executed benchmark produced one primary discrepancy value for each of the 17 method conditions.
+Table 2 reports these values exactly as logged, ordered from lowest discrepancy to highest discrepancy.
+Because the experiment ran once, the table is descriptive: all between-method differences are not
+statistically significant, and no p-values are available for valid inferential comparison. Even under
+that constraint, the ranking is informative for the finite-dimensional correction question because all
+9
+
+Figure 3: Empirical eigenvalue density convergence toward the Marchenko–Pastur law
+methods were compared on the same task and under the same metric interface.
+Table 2. Primary discrepancy metric for all evaluated methods in the executed run.
+Lower values indicate better agreement with the empirical Wishart spectrum. Since
+the experiment was executed once, all comparisons are descriptive and not statistically
+significant.
+The most immediate pattern in Table 2 is that the best observed methods are all trimmed-reference
+variants. SupportWindowOnlyBulkReference achieved the lowest primary metric, followed closely
+by BulkTrimmedReferenceMP and RankTrimOnlyBulkReference. This ranking is consistent with
+the idea that finite-dimensional discrepancy from MP is handled effectively by suppressing boundarysensitive regions rather than by fitting a globally flexible correction. Since the experiment was executed
+once, this difference is not statistically significant, but the descriptive ordering is still meaningful
+because the top three methods belong to the same conceptual family. Building on that observation,
+the edge-focused profiler methods also occupy the next tier of performance, with HistogramOnlyEdgeProfiler, DensityOnlyDiscrepancyProbe, NoBoundaryCorrectionEdgeProfiler, and BoundaryAwareKernelEdgeProfiler all scoring far below the uncorrected MP reference.
+A second pattern is the tight clustering of the low-order convergence models. NoInteractionAspectRatioConvergenceModel, AspectRatioStratifiedConvergenceModel, and DimensionOnlyConvergenceModel all lie near one another on the primary metric. This clustering suggests that,
+in the executed benchmark, adding simple parametric dependence on dimension and aspect ratio did
+not produce a large reduction in discrepancy relative to the best trimmed references. Because there
+is only one run, the paper does not claim that these models are equivalent in a statistical sense. Still,
+their close descriptive ranking indicates that low-order convergence modeling alone did not capture
+the dominant finite-dimensional effect as effectively as edge-aware trimming.
+The support-warp family yields a third interpretable pattern. EndpointShiftOnlyWarpCorrection, FixedEndpointWarpCorrection, and ThreeParameterSupportWarpCorrection all
+improved descriptively over UncorrectedMarchenkoPasturReference, but they remained well
+behind the trimmed-reference family. This result points to a useful distinction. Support misalignment
+appears to be part of the finite-dimensional problem, since all three support-warp methods
+scored below the raw MP baseline, but support correction alone was not sufficient to match the
+stronger edge-aware references in the executed run. That observation favors a boundary-sensitive
+interpretation of finite-N error over a purely geometric one.
+The weakest observed method was AdditiveResidualDensityCorrection, which scored much
+higher than all other conditions. In practical terms, this means that the most flexible density-domain
+correction in the benchmark was also the least effective under the logged primary metric. The
+result is descriptive rather than inferential, but it is still scientifically useful because it cautions
+
+10
+
+Figure 4: Edge versus bulk error decomposition across correction families. Edge-localized discrepancy
+dominates the total error for uncorrected and support-warp methods, while trimmed references
+suppress this component effectively.
+against assuming that more expressive finite-dimensional correction automatically improves spectral
+approximation. In the present benchmark, simple structured alternatives outperformed the flexible
+residual model.
+To make the family-level picture clearer without introducing unsupported new measurements,
+Table 3 groups the methods by correction mechanism and identifies the best observed member of each
+family. This table is a reorganization of the same executed data from Table 2, not a new experiment.
+As before, all family-level differences are descriptive and not statistically significant because the
+benchmark was executed once.
+Table 3. Family-level summary of the executed benchmark. The ‘best observed
+method” and ‘best observed metric” columns are derived directly from Table 2. Since
+the experiment was executed once, all family-level comparisons are descriptive and not
+statistically significant.
+Table 3 sharpens the interpretation of the ranking. The trimmed-reference family is the clear
+descriptive leader in the executed benchmark, with its best member scoring substantially below every
+other family. The edge-profiler and discrepancy-probe family forms a second tier, indicating that
+methods designed to interrogate or stabilize boundary behavior were also competitive. By contrast,
+the support-warp family and the low-order convergence family improved only partially over the raw
+MP baseline, and the additive residual correction pulled the convergence-and-residual family upward
+because of its high discrepancy. This organization reinforces the main empirical message of the
+paper: in the observed pilot study, edge-aware simplification was more effective than more expressive
+finite-N correction strategies.
+The figures help interpret why this family-level ordering is plausible. As shown in Figure 1,
+convergence to MP with increasing dimension is a structured process, not a uniform collapse of
+11
+
+Figure 5: Finite-size deviation heatmap showing discrepancy from the Marchenko–Pastur law across
+dimension and aspect ratio. Darker regions indicate larger deviations, concentrated near the support
+boundaries at smaller dimensions.
+all discrepancy at once. Figure 2 complements this by emphasizing that the broad density shape
+can approach MP while localized mismatch remains near the support boundaries. Within that
+picture, the success of SupportWindowOnlyBulkReference, BulkTrimmedReferenceMP, and RankTrimOnlyBulkReference becomes easier to understand. These methods do not try to solve every
+aspect of finite-dimensional mismatch; they focus on the region where the benchmark suggests the
+main practical difficulty lies. Conversely, the weaker performance of AdditiveResidualDensityCorrection indicates that a flexible global adjustment can be less robust than a targeted structural
+simplification.
+The results therefore support a specific empirical conclusion that is narrower than the original draft
+but stronger in evidential alignment. In this single executed run, the best observed finite-dimensional
+approximations to Wishart spectra relative to the MP law were not the most expressive correction
+models. They were the simplest edge-aware trimmed references. Because the experiment ran once,
+this conclusion is descriptive and all between-method differences are not statistically significant.
+Even so, the ranking provides useful evidence about the mechanism of finite-dimensional discrepancy:
+boundary handling mattered more than global support warping or additive density correction in the
+observed benchmark.
+
+6
+
+Discussion
+
+The main implication of the executed benchmark is that finite-dimensional correction to the
+Marchenko–Pastur law may be governed more by boundary treatment than by model expressivity.
+The strongest observed methods were the trimmed-reference variants, not the support-warps, not
+the low-order convergence models, and not the additive residual correction. This matters because it
+aligns with theoretical intuition from local MP laws and edge-fluctuation analyses, which identify the
+support boundaries as regions where finite-size effects remain delicate even when bulk behavior is
+already close to asymptotic form [13, 15, 18]. The present study does not prove that edge effects
+dominate in a theorem-level sense, but the descriptive ranking from the executed run supports that
+interpretation as the most plausible reading of the observed data.
+This finding also clarifies a distinction that is often blurred in computational uses of MP. One
+possibility is that the asymptotic law fails globally and therefore requires a flexible full-spectrum
+surrogate. Another is that the bulk is already captured reasonably well while the most consequential
+discrepancy is concentrated near the support boundaries. The observed ranking favors the second
+explanation. SupportWindowOnlyBulkReference, BulkTrimmedReferenceMP, and RankTrimOnlyBulkReference all performed strongly, while AdditiveResidualDensityCorrection performed
+
+12
+
+Method
+
+Primary metric
+0.0288
+0.0396
+0.0425
+—
+—
+—
+—
+—
+—
+—
+—
+—
+—
+1.7473
+—
+—
+4.7022
+
+SupportWindowOnlyBulkReference
+BulkTrimmedReferenceMP
+RankTrimOnlyBulkReference
+HistogramOnlyEdgeProfiler
+DensityOnlyDiscrepancyProbe
+NoBoundaryCorrectionEdgeProfiler
+BoundaryAwareKernelEdgeProfiler
+NoInteractionAspectRatioConvergenceModel
+AspectRatioStratifiedConvergenceModel
+DimensionOnlyConvergenceModel
+EndpointShiftOnlyWarpCorrection
+FixedEndpointWarpCorrection
+ThreeParameterSupportWarpCorrection
+UncorrectedMarchenkoPasturReference
+CDFWassersteinRobustDiscrepancyProbe
+EdgeLocalizedDiscrepancyAtlas
+AdditiveResidualDensityCorrection
+
+Table 2: Performance comparison of different methods on Primary metric
+Method family
+
+Included methods
+
+Best observed method
+
+Asymptotic reference
+Trimmed references
+Edge profilers and discrepancy probes
+Support-warps
+Convergence and residual models
+
+UncorrectedMarchenkoPasturReference
+SupportWindowOnlyBulkReference, BulkTrimmedReferenceMP, RankTrimOnlyBulkReference
+HistogramOnlyEdgeProfiler, DensityOnlyDiscrepancyProbe, NoBoundaryCorrectionEdgeProfiler, BoundaryAwareKernelEdgeProfiler, CDFWassersteinRobustDiscrepancyProbe, EdgeLocalizedDiscrepancyAtlas
+EndpointShiftOnlyWarpCorrection, FixedEndpointWarpCorrection, ThreeParameterSupportWarpCorrection
+NoInteractionAspectRatioConvergenceModel, AspectRatioStratifiedConvergenceModel, DimensionOnlyConvergenceModel, AdditiveResidualDensityCorrection
+
+UncorrectedMarchenkoPasturReference
+SupportWindowOnlyBulkReference
+HistogramOnlyEdgeProfiler
+EndpointShiftOnlyWarpCorrection
+NoInteractionAspectRatioConvergenceModel
+
+Best observed metric
+—
+—
+—
+—
+—
+
+Table 3: Performance comparison of different methods on Included methods, Best observed method,
+Best observed metric
+poorly. In contrast to application settings where visual density overlays can hide where mismatch
+arises [8, 16, 19, 20], the present benchmark makes the mechanism comparison explicit. The practical
+implication is straightforward: when finite-dimensional covariance spectra are interpreted through
+MP, edge-aware references may offer a more reliable first correction than globally flexible density
+adjustments.
+The relative weakness of the low-order convergence models is also informative. DimensionOnlyConvergenceModel, NoInteractionAspectRatioConvergenceModel, and AspectRatioStratifiedConvergenceModel clustered tightly in the executed run, and none approached
+the trimmed-reference family. This suggests that finite-dimensional discrepancy was not summarized
+effectively by a simple dependence on dimension and aspect ratio alone. That observation is consistent
+with work showing that local spectral structure, especially near edges, can matter more than coarse
+proportional-growth parameters for finite-sample behavior [4, 23, 25]. A natural interpretation is
+that N and c are necessary descriptors of the regime but not sufficient descriptors of the dominant
+correction mechanism. The benchmark therefore points toward hybrid models that preserve explicit
+edge structure while allowing moderate dependence on dimension and aspect ratio.
+The support-warp results add another layer to the story. All three support-warp methods improved
+descriptively over the raw MP baseline, so support misalignment is part of the finite-dimensional
+problem. Yet none of them matched the trimmed-reference family. This indicates that moving
+
+13
+
+the endpoints of the MP support, or applying a low-parameter warp to that support, does not
+fully address the observed discrepancy. The remaining error is more naturally interpreted as shape
+distortion near the edges than as a pure shift of λ− and λ+ . That conclusion fits well with random
+matrix intuition: endpoint locations matter, but the finite-N behavior near those endpoints is often
+more subtle than a simple support correction can express [13, 14].
+From an applied perspective, the study offers a practical design principle for any workflow that uses
+MP as a finite-sample reference. In denoising, covariance regularization, and spectral thresholding,
+one often needs a correction that is cheap, interpretable, and stable [7, 12, 20]. The present benchmark
+suggests that a trimmed or bulk-focused MP reference may satisfy those requirements better than a
+more expressive residual correction. That is a useful operational insight because it shifts attention
+from building increasingly flexible spectral surrogates to handling the support boundaries correctly.
+The broader implication is not that flexible correction is unnecessary, but that finite-dimensional
+MP approximation appears to benefit most when it respects the geometry of the spectrum and the
+special role of the edges.
+
+7
+
+Limitations
+
+The evidence in this paper comes from one executed run, so all numerical comparisons are descriptive
+and all between-method differences are not statistically significant. The results table therefore
+supports a ranking of observed primary-metric values, not inferential claims about population-level
+superiority among correction families.
+The executed output contains one primary discrepancy value per method condition and does not
+include seedwise or regimewise breakdowns over dimension and aspect ratio. As a result, the paper
+cannot report confidence intervals, p-values, or separate convergence curves for specific (N, c) regimes,
+even though the scientific target of the study spans dimensions from 50 to 5000.
+The benchmark is restricted to the iid Gaussian Wishart ensemble. Finite-dimensional corrections
+may behave differently for correlated, heavy-tailed, sparse, or deformed covariance models, so the
+conclusions here should be interpreted as specific to the classical Wishart setting studied in the
+paper.
+Method descriptions are richer than the executed output because MPCX is a general framework
+while the available experiment log exposes only the common primary metric. This means the
+paper can compare correction families on the logged discrepancy measure, but it cannot decompose
+performance further into separate transport, CDF, or density components.
+The computation was executed on an NVIDIA RTX 6000 Ada Generation system, and eigendecomposition remains the dominant cost in the pipeline. For larger or denser regime grids, benchmark
+expansion will require careful control of spectral-computation time in addition to correction-model
+complexity.
+
+8
+
+Conclusion
+
+This paper studied finite-dimensional corrections to the Marchenko–Pastur law for Gaussian Wishart
+spectra through MPCX, a framework that compares raw MP, trimmed references, edge-focused probes,
+support-warps, and low-order convergence models under a common primary discrepancy metric. In
+the executed run, the lowest observed discrepancies came from SupportWindowOnlyBulkReference,
+BulkTrimmedReferenceMP, and RankTrimOnlyBulkReference, while the uncorrected MP reference
+and additive residual density correction were markedly worse; since the benchmark ran once, these
+findings are descriptive and not statistically significant.
+The central practical lesson is that edge-aware trimming was the most effective observed correction
+strategy in this pilot study, which points to boundary behavior as the key finite-dimensional issue
+for MP approximation in Wishart spectra. Future work should extend the benchmark to replicated
+runs with regime-level reporting over dimension and aspect ratio, and should test whether the same
+edge-centered pattern persists in correlated, sparse, and heavy-tailed covariance ensembles.
+
+14
+
+References
+[1] Gernot Akemann, Sung-Soo Byun, and Nam-Gyu Kang. A non-Hermitian generalisation of
+the Marchenko–Pastur distribution: From the circular law to multi-criticality. Annales Henri
+Poincaré, 22:1035–1068, 2021. doi: 10.1007/s00023-020-00973-7. URL https://doi.org/10.
+1007/s00023-020-00973-7.
+[2] Shokrya S. Alshqaq, Raouf Fakhfakh, and Fatimah Alshahrani. Notes on the free additive
+convolution. Axioms, 14(6):453, 2025. doi: 10.3390/axioms14060453. URL https://doi.org/
+10.3390/axioms14060453.
+[3] Nicolas Jean Leopold Pierre Auguin. Random Matrix Analysis of Gram Matrices and Large
+Robust Covariance Matrix Estimators with Applications. PhD dissertation, Hong Kong University
+of Science and Technology, 2019. URL https://repository.hkust.edu.hk/ir/Record/1783.
+1-102303.
+[4] Zhigang Bao, Xiucai Ding, and Ke Wang. Singular vector and singular subspace distribution
+for the matrix denoising model. The Annals of Statistics, 49(1):370–392, 2021. doi: 10.1214/
+20-AOS1960. URL https://doi.org/10.1214/20-AOS1960.
+[5] Leonid Berlyand, Etienne Sandier, Yitzchak Shmalo, and Lei Zhang. Enhancing accuracy in
+deep learning using random matrix theory. Journal of Machine Learning, 3(4):347–412, 2024.
+doi: 10.4208/jml.231220. URL https://doi.org/10.4208/jml.231220.
+[6] Sung-Soo Byun, Yeong-Gwang Jung, and Guido Mazzuca. q-deformation of the Marchenko–
+Pastur law. arXiv preprint arXiv:2601.09427, 2026. URL https://arxiv.org/abs/2601.09427.
+[7] Domagoj Ćevid, Peter Bühlmann, and Nicolai Meinshausen. Spectral deconfounding via
+perturbed sparse linear models. Journal of Machine Learning Research, 21(232):1–41, 2020.
+URL https://jmlr.org/papers/v21/19-545.html.
+[8] Nichlas Vous Christensen, Michael Væggemose, Nikolaj Bøgh, Esben Søvsø Szocska Hansen,
+Jonas Lynge Olesen, Yaewon Kim, Daniel B. Vigneron, Jeremy W. Gordon, Sune Nørhøj
+Jespersen, and Christoffer Laustsen. A user independent denoising method for x-nuclei MRI
+and MRS. Magnetic Resonance in Medicine, 91(3):1215–1230, 2023. doi: 10.1002/mrm.29817.
+URL https://doi.org/10.1002/mrm.29817.
+[9] William T. Clarke and Mark Chiew. Uncertainty in denoising of MRSI using low-rank methods.
+Magnetic Resonance in Medicine, 87(5):2480–2492, 2022. doi: 10.1002/mrm.29018. URL
+https://doi.org/10.1002/mrm.29018.
+[10] Mérouane Debbah. Random matrix theory and free probability. In NEWCOM++ WP 2.1
+– Paradigms Collection and Foundations. INRIA, 2008. URL http://www-sop.inria.fr/
+members/Eitan.Altman/PAPERS/paradigms2008.pdf.
+[11] Ben Deitmar. Marchenko–Pastur laws for Daniell smoothed periodograms. arXiv preprint
+arXiv:2408.14618, 2024. URL https://arxiv.org/abs/2408.14618.
+[12] Edgar Dobriban, William Leeb, and Amit Singer. Optimal prediction in the linearly transformed
+spiked model. The Annals of Statistics, 48(1):491–513, 2020. doi: 10.1214/19-AOS1819. URL
+https://doi.org/10.1214/19-AOS1819.
+[13] Peter J. Forrester. A review of exact results for fluctuation formulas in random matrix theory.
+Probability Surveys, 20:170–225, 2023. doi: 10.1214/23-PS15. URL https://doi.org/10.1214/
+23-PS15.
+[14] Yan V. Fyodorov, Boris A. Khoruzhenko, and Mihail Poplavskyi. Extreme eigenvalues and the
+emerging outlier in rank-one non-Hermitian deformations of the Gaussian unitary ensemble.
+Entropy, 25(1):74, 2023. doi: 10.3390/e25010074. URL https://doi.org/10.3390/e25010074.
+15
+
+[15] Friedrich Götze, Dmitry A. Timushev, and Alexander Tikhomirov. Local Marchenko–Pastur
+law for sparse rectangular random matrices. Doklady Mathematics, 104(3):332–335, 2021. doi:
+10.1134/S1064562421060065. URL https://doi.org/10.1134/S1064562421060065.
+[16] Rafael Neto Henriques, Andrada Ianuş, Lisa Novello, Jorge Jovicich, Sune Nørhøj Jespersen, and
+Noam Shemesh. Efficient PCA denoising of spatially correlated redundant MRI data. Imaging
+Neuroscience, 1:1–26, 2023. doi: 10.1162/imag_a_00049. URL https://doi.org/10.1162/
+imag_a_00049.
+[17] Masato Hisakado and Takuya Kaneko. Deformation of Marchenko–Pastur distribution for
+the correlated time series. Journal of the Physical Society of Japan, 94(1):014801, 2025. doi:
+10.7566/JPSJ.94.014801. URL https://doi.org/10.7566/JPSJ.94.014801.
+[18] Anastasis Kafetzopoulos and Anna Maltsev. Local Marchenko–Pastur law at the hard edge
+of the sample covariance ensemble. arXiv preprint arXiv:2206.01971, 2022. URL https:
+//arxiv.org/abs/2206.01971.
+[19] Steen Moeller, Pramod Kumar Pisharady, Sudhir Ramanna, Christophe Lenglet, Xiaoping Wu,
+Logan T. Dowdle, Essa Yacoub, Kâmil Uğurbil, and Mehmet Akçakaya. NOise reduction with
+DIstribution corrected (NORDIC) PCA in dMRI with complex-valued parameter-free locally
+low-rank processing. NeuroImage, 226:117539, 2021. doi: 10.1016/j.neuroimage.2020.117539.
+URL https://doi.org/10.1016/j.neuroimage.2020.117539.
+[20] Jessie Mosso, Dunja Simičić, Kadir Şimşek, Roland Kreis, Cristina Cudalbu, and Ileana Jelescu.
+MP-PCA denoising for diffusion MRS data: Promises and pitfalls. NeuroImage, 263:119634,
+2022. doi: 10.1016/j.neuroimage.2022.119634. URL https://doi.org/10.1016/j.neuroimage.
+2022.119634.
+[21] Leonid Pastur. Eigenvalue distribution of large random matrices arising in deep neural networks:
+Orthogonal case. Journal of Mathematical Physics, 63(6):063505, 2022. doi: 10.1063/5.0085204.
+URL https://doi.org/10.1063/5.0085204.
+[22] Elad Romanov, Fangzhao Zhang, and Mert Pilanci. Newton meets Marchenko–Pastur: Massively parallel second-order optimization with Hessian sketching and debiasing. arXiv preprint
+arXiv:2410.01374, 2024. URL https://arxiv.org/abs/2410.01374.
+[23] Koki Shimizu and Hiroki Hashiguchi. Expressing the largest eigenvalue of a singular beta
+F-matrix with heterogeneous hypergeometric functions. arXiv preprint arXiv:2004.09833, 2020.
+URL https://arxiv.org/abs/2004.09833.
+[24] Jinzhao Wang. Beyond islands: A free probabilistic approach. Journal of High Energy
+Physics, 2023(10):40, 2023. doi: 10.1007/JHEP10(2023)040. URL https://doi.org/10.1007/
+JHEP10(2023)040.
+[25] Dong Xia. Normal approximation and confidence region of singular subspaces. Electronic
+Journal of Statistics, 15(2):3798–3851, 2021. doi: 10.1214/21-EJS1876. URL https://doi.org/
+10.1214/21-EJS1876.
+[26] Pavel Yaskov. Marchenko–Pastur law for a random tensor model. Electronic Communications
+in Probability, 28:1–12, 2023. doi: 10.1214/23-ECP527. URL https://doi.org/10.1214/
+23-ECP527.
+
+16
+
+

@@ -28,21 +28,19 @@ class EmbeddingStore:
         self._collection = None
         self._next_index = 0
 
-        try:
-            import chromadb
+        # ChromaDB is opt-in via CHROMA_PERSIST_DIR so tests and local runs
+        # use a clean in-memory store unless persistence is explicitly requested.
+        persist_dir = os.getenv("CHROMA_PERSIST_DIR")
+        if persist_dir:
+            try:
+                import chromadb
 
-            persist_dir = os.getenv("CHROMA_PERSIST_DIR")
-            if persist_dir:
                 client = chromadb.PersistentClient(path=persist_dir)
-            else:
-                client = chromadb.Client()
-
-            # Prefer a stable collection name.
-            self._collection = client.get_or_create_collection(name=self._collection_name)
-            self._use_chroma = True
-        except Exception:
-            self._use_chroma = False
-            self._collection = None
+                self._collection = client.get_or_create_collection(name=self._collection_name)
+                self._use_chroma = True
+            except Exception:
+                self._use_chroma = False
+                self._collection = None
 
     def _make_record(self, doc: Document) -> dict[str, Any]:
         embedding = self._embedding_fn(doc.content or "")

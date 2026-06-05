@@ -3,127 +3,127 @@
   "document_count": 6,
   "document_inventory": [
     {
-      "source": "data\\customer_support_playbook.txt",
-      "chars": 1692,
-      "category": "support",
+      "source": "data\\paper_I_random_matrix.txt",
+      "chars": 54622,
+      "category": "statistics",
       "language": "en"
     },
     {
-      "source": "data\\python_intro.txt",
-      "chars": 1944,
-      "category": "technical",
+      "source": "data\\paper_II_weak_iv_estimators.txt",
+      "chars": 42390,
+      "category": "econometrics",
       "language": "en"
     },
     {
-      "source": "data\\vector_store_notes.md",
-      "chars": 2123,
-      "category": "technical",
+      "source": "data\\paper_III_sir_seir_identifiability.txt",
+      "chars": 56000,
+      "category": "epidemiology",
       "language": "en"
     },
     {
-      "source": "data\\rag_system_design.md",
-      "chars": 2391,
-      "category": "technical",
+      "source": "data\\paper_IV_krylov_preconditioners.txt",
+      "chars": 51431,
+      "category": "numerical_methods",
       "language": "en"
     },
     {
-      "source": "data\\chunking_experiment_report.md",
-      "chars": 1987,
-      "category": "technical",
+      "source": "data\\paper_V_gard_lora.txt",
+      "chars": 55603,
+      "category": "machine_learning",
       "language": "en"
     },
     {
-      "source": "data\\vi_retrieval_notes.md",
-      "chars": 1667,
-      "category": "technical",
-      "language": "vi"
+      "source": "data\\paper_VI_lace_exploration.txt",
+      "chars": 31079,
+      "category": "reinforcement_learning",
+      "language": "en"
     }
   ],
   "document_catalog": [
     {
-      "path": "customer_support_playbook.txt",
-      "category": "support",
+      "path": "paper_I_random_matrix.txt",
+      "category": "statistics",
       "language": "en",
-      "doc_type": "playbook",
-      "audience": "internal"
+      "doc_type": "preprint",
+      "topic": "random_matrix"
     },
     {
-      "path": "python_intro.txt",
-      "category": "technical",
+      "path": "paper_II_weak_iv_estimators.txt",
+      "category": "econometrics",
       "language": "en",
-      "doc_type": "tutorial",
-      "audience": "public"
+      "doc_type": "preprint",
+      "topic": "instrumental_variables"
     },
     {
-      "path": "vector_store_notes.md",
-      "category": "technical",
+      "path": "paper_III_sir_seir_identifiability.txt",
+      "category": "epidemiology",
       "language": "en",
-      "doc_type": "notes",
-      "audience": "public"
+      "doc_type": "preprint",
+      "topic": "compartmental_models"
     },
     {
-      "path": "rag_system_design.md",
-      "category": "technical",
+      "path": "paper_IV_krylov_preconditioners.txt",
+      "category": "numerical_methods",
       "language": "en",
-      "doc_type": "design",
-      "audience": "internal"
+      "doc_type": "preprint",
+      "topic": "sparse_linear_systems"
     },
     {
-      "path": "chunking_experiment_report.md",
-      "category": "technical",
+      "path": "paper_V_gard_lora.txt",
+      "category": "machine_learning",
       "language": "en",
-      "doc_type": "report",
-      "audience": "internal"
+      "doc_type": "preprint",
+      "topic": "parameter_efficient_finetuning"
     },
     {
-      "path": "vi_retrieval_notes.md",
-      "category": "technical",
-      "language": "vi",
-      "doc_type": "notes",
-      "audience": "internal"
+      "path": "paper_VI_lace_exploration.txt",
+      "category": "reinforcement_learning",
+      "language": "en",
+      "doc_type": "preprint",
+      "topic": "exploration"
     }
   ],
   "baseline": {
-    "customer_support_playbook.txt": {
+    "paper_I_random_matrix.txt": {
       "fixed_size": {
-        "count": 10,
-        "avg_length": 187.2
+        "count": 304,
+        "avg_length": 199.6
       },
       "by_sentences": {
-        "count": 4,
-        "avg_length": 421.0
+        "count": 140,
+        "avg_length": 389.1
       },
       "recursive": {
-        "count": 14,
-        "avg_length": 119.1
+        "count": 358,
+        "avg_length": 151.3
       }
     },
-    "chunking_experiment_report.md": {
+    "paper_III_sir_seir_identifiability.txt": {
       "fixed_size": {
-        "count": 11,
-        "avg_length": 198.8
+        "count": 311,
+        "avg_length": 200.0
       },
       "by_sentences": {
-        "count": 5,
-        "avg_length": 395.6
+        "count": 162,
+        "avg_length": 344.6
       },
       "recursive": {
-        "count": 18,
-        "avg_length": 108.4
+        "count": 374,
+        "avg_length": 148.5
       }
     },
-    "vi_retrieval_notes.md": {
+    "paper_V_gard_lora.txt": {
       "fixed_size": {
-        "count": 10,
-        "avg_length": 184.7
+        "count": 309,
+        "avg_length": 199.9
       },
       "by_sentences": {
-        "count": 5,
-        "avg_length": 331.6
+        "count": 135,
+        "avg_length": 410.7
       },
       "recursive": {
-        "count": 13,
-        "avg_length": 126.3
+        "count": 366,
+        "avg_length": 150.7
       }
     }
   },
@@ -177,289 +177,289 @@
   "strategy_results": {
     "fixed_size_300": {
       "strategy": "fixed_size_300",
-      "chunk_count": 49,
+      "chunk_count": 1167,
       "relevant_top3": 5,
       "queries": [
         {
           "id": 1,
-          "query": "What should support articles avoid writing?",
-          "gold_answer": "Support articles should avoid vague statements such as 'check the settings' or 'contact engineering if needed.' They should specify the exact page, button, or log source.",
-          "expected_source": "customer_support_playbook",
+          "query": "What is MPCX and what finite-dimensional correction problem does it study?",
+          "gold_answer": "MPCX is a computational framework that compares finite-dimensional corrections to the Marchenko-Pastur law for Gaussian Wishart matrices, evaluating bulk-sensitive and edge-sensitive strategies for dimensions from 50 to 5000.",
+          "expected_source": "paper_I_random_matrix",
           "relevant_in_top3": true,
           "top3_sources": [
-            "customer_support_playbook",
-            "customer_support_playbook",
-            "customer_support_playbook"
+            "paper_I_random_matrix",
+            "paper_I_random_matrix",
+            "paper_I_random_matrix"
           ],
-          "top1_preview": "xed documents should contain clear issue descriptions, step-by-step resolutions, escalation criteria, and references to ",
-          "top1_score": 0.506,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\customer_support_playbook.txt, p.?) xed documents should contain clea"
+          "top1_preview": ", which is classical, but how finite-dimensional spectra deviate from MP and whether those deviations are better handled",
+          "top1_score": 0.736,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_I_random_matrix.txt, p.?) , which is classical, but how finite-"
         },
         {
           "id": 2,
-          "query": "What is the proposed architecture for the RAG system?",
-          "gold_answer": "Ingestion chunks documents and stores segments with metadata; retrieval embeds questions and applies optional metadata filters; the application layer builds a prompt from top retrieved chunks.",
-          "expected_source": "rag_system_design",
+          "query": "Which IV estimators formed the lowest-loss cluster in the IVX benchmark?",
+          "gold_answer": "LIML, Fuller(1), and Fuller(4) formed a tightly clustered low-loss group (metrics around 0.84), while 2SLS and JIVE had much larger losses.",
+          "expected_source": "paper_II_weak_iv_estimators",
           "relevant_in_top3": true,
           "top3_sources": [
-            "rag_system_design",
-            "rag_system_design",
-            "vi_retrieval_notes"
+            "paper_II_weak_iv_estimators",
+            "paper_II_weak_iv_estimators",
+            "paper_II_weak_iv_estimators"
           ],
-          "top1_preview": "# RAG System Design for an Internal Knowledge Assistant ## Background A product team wants an assistant that can answer ",
-          "top1_score": 0.402,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\rag_system_design.md, p.?) # RAG System Design for an Internal Knowle"
+          "top1_preview": "cent 2 Figure 1: Overview of the IVX evaluation framework. The pipeline generates synthetic IV data from a common struct",
+          "top1_score": 0.635,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_II_weak_iv_estimators.txt, p.?) cent 2 Figure 1: Overview of th"
         },
         {
           "id": 3,
-          "query": "Which chunking strategy performed best in the experiment?",
-          "gold_answer": "Recursive chunking offered the best balance: it preserved context while staying within the target size range.",
-          "expected_source": "chunking_experiment_report",
+          "query": "What is PRIM and what identifiability diagnostics does it compare for epidemic models?",
+          "gold_answer": "PRIM benchmarks structural and practical identifiability for SIR and SEIR models using profile likelihood, Fisher Information diagnostics, and maximum-likelihood estimation on synthetic outbreaks.",
+          "expected_source": "paper_III_sir_seir_identifiability",
           "relevant_in_top3": true,
           "top3_sources": [
-            "chunking_experiment_report",
-            "chunking_experiment_report",
-            "chunking_experiment_report"
+            "paper_III_sir_seir_identifiability",
+            "paper_III_sir_seir_identifiability",
+            "paper_III_sir_seir_identifiability"
           ],
-          "top1_preview": "e chunking offered the best balance in the experiment. It first tried to split on larger structural boundaries such as p",
-          "top1_score": 0.719,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\chunking_experiment_report.md, p.?) e chunking offered the best balan"
+          "top1_preview": ". Chen et al. and Saucedo et al. focus more directly on practical identifiability in compartmental epidemic models [3, 2",
+          "top1_score": 0.804,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_III_sir_seir_identifiability.txt, p.?) . Chen et al. and Sauced"
         },
         {
           "id": 4,
-          "query": "Metadata giúp retrieval tránh nhầm tài liệu như thế nào?",
-          "gold_answer": "Metadata (phòng ban, ngôn ngữ, độ nhạy cảm, ngày cập nhật) giúp lọc tài liệu phù hợp, ví dụ tránh lấy marketing hoặc tài liệu tiếng Anh khi hỏi về tài liệu kỹ thuật tiếng Việt.",
-          "expected_source": "vi_retrieval_notes",
+          "query": "How does GARD allocate LoRA ranks using gradient spectral analysis?",
+          "gold_answer": "GARD estimates per-layer gradient covariance spectra, derives an effective dimensionality signal, and maps it to discrete LoRA ranks under a fixed global adapter parameter budget.",
+          "expected_source": "paper_V_gard_lora",
           "relevant_in_top3": true,
           "top3_sources": [
-            "vi_retrieval_notes",
-            "vi_retrieval_notes",
-            "vi_retrieval_notes"
+            "paper_V_gard_lora",
+            "paper_V_gard_lora",
+            "paper_V_gard_lora"
           ],
-          "top1_preview": "ể gắn nhãn tài liệu theo phòng ban, ngôn ngữ, độ nhạy cảm, hoặc ngày cập nhật. Khi người dùng hỏi về tài liệu kỹ thuật b",
-          "top1_score": 0.588,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vi_retrieval_notes.md, p.?) ể gắn nhãn tài liệu theo phòng ban, ngôn "
+          "top1_preview": "he additional compute and memory overhead relative to plain LoRA on larger LLMs. 8 Conclusion This work introduced GARD,",
+          "top1_score": 0.759,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_V_gard_lora.txt, p.?) he additional compute and memory overhead"
         },
         {
           "id": 5,
-          "query": "What are the four stages of a vector search pipeline?",
-          "gold_answer": "Chunk documents, embed each chunk, store the vector and metadata, then embed the query and rank stored vectors by similarity.",
-          "expected_source": "vector_store_notes",
+          "query": "Which Krylov preconditioners were compared on sparse linear systems?",
+          "gold_answer": "The study compares Jacobi, SSOR, ILU, and AMG preconditioners with Krylov solvers such as CG, GMRES, and BiCGSTAB on structured and unstructured sparse systems.",
+          "expected_source": "paper_IV_krylov_preconditioners",
           "relevant_in_top3": true,
           "top3_sources": [
-            "vector_store_notes",
-            "vector_store_notes",
-            "chunking_experiment_report"
+            "paper_IV_krylov_preconditioners",
+            "paper_IV_krylov_preconditioners",
+            "paper_IV_krylov_preconditioners"
           ],
-          "top1_preview": "lustering workflows, and retrieval-augmented generation. ## Typical Workflow A common vector search pipeline has four st",
-          "top1_score": 0.752,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vector_store_notes.md, p.?) lustering workflows, and retrieval-augmen"
+          "top1_preview": "Comparative Analysis of Krylov Preconditioners on Sparse Linear Systems Preprint. Under review. Anonymous Abstract Preco",
+          "top1_score": 0.904,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_IV_krylov_preconditioners.txt, p.?) Comparative Analysis of Kry"
         }
       ]
     },
     "sentence_2": {
       "strategy": "sentence_2",
-      "chunk_count": 49,
+      "chunk_count": 1199,
       "relevant_top3": 5,
       "queries": [
         {
           "id": 1,
-          "query": "What should support articles avoid writing?",
-          "gold_answer": "Support articles should avoid vague statements such as 'check the settings' or 'contact engineering if needed.' They should specify the exact page, button, or log source.",
-          "expected_source": "customer_support_playbook",
+          "query": "What is MPCX and what finite-dimensional correction problem does it study?",
+          "gold_answer": "MPCX is a computational framework that compares finite-dimensional corrections to the Marchenko-Pastur law for Gaussian Wishart matrices, evaluating bulk-sensitive and edge-sensitive strategies for dimensions from 50 to 5000.",
+          "expected_source": "paper_I_random_matrix",
           "relevant_in_top3": true,
           "top3_sources": [
-            "customer_support_playbook",
-            "customer_support_playbook",
-            "customer_support_playbook"
+            "paper_I_random_matrix",
+            "paper_I_random_matrix",
+            "paper_I_random_matrix"
           ],
-          "top1_preview": "When writing support content, authors should avoid vague statements such as \"check the settings\" or \"contact engineering",
-          "top1_score": 0.51,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\customer_support_playbook.txt, p.?) When writing support content, aut"
+          "top1_preview": "MPCX differs by treating the Wishart spectrum itself as the primary object of study and by comparing correction families",
+          "top1_score": 0.705,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_I_random_matrix.txt, p.?) MPCX differs by treating the Wishart "
         },
         {
           "id": 2,
-          "query": "What is the proposed architecture for the RAG system?",
-          "gold_answer": "Ingestion chunks documents and stores segments with metadata; retrieval embeds questions and applies optional metadata filters; the application layer builds a prompt from top retrieved chunks.",
-          "expected_source": "rag_system_design",
+          "query": "Which IV estimators formed the lowest-loss cluster in the IVX benchmark?",
+          "gold_answer": "LIML, Fuller(1), and Fuller(4) formed a tightly clustered low-loss group (metrics around 0.84), while 2SLS and JIVE had much larger losses.",
+          "expected_source": "paper_II_weak_iv_estimators",
           "relevant_in_top3": true,
           "top3_sources": [
-            "rag_system_design",
-            "rag_system_design",
-            "vi_retrieval_notes"
+            "paper_II_weak_iv_estimators",
+            "paper_II_weak_iv_estimators",
+            "paper_II_weak_iv_estimators"
           ],
-          "top1_preview": "# RAG System Design for an Internal Knowledge Assistant ## Background A product team wants an assistant that can answer ",
-          "top1_score": 0.446,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\rag_system_design.md, p.?) # RAG System Design for an Internal Knowle"
+          "top1_preview": "More recent 2 Figure 1: Overview of the IVX evaluation framework. The pipeline generates synthetic IV data from a common",
+          "top1_score": 0.632,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_II_weak_iv_estimators.txt, p.?) More recent 2 Figure 1: Overvie"
         },
         {
           "id": 3,
-          "query": "Which chunking strategy performed best in the experiment?",
-          "gold_answer": "Recursive chunking offered the best balance: it preserved context while staying within the target size range.",
-          "expected_source": "chunking_experiment_report",
+          "query": "What is PRIM and what identifiability diagnostics does it compare for epidemic models?",
+          "gold_answer": "PRIM benchmarks structural and practical identifiability for SIR and SEIR models using profile likelihood, Fisher Information diagnostics, and maximum-likelihood estimation on synthetic outbreaks.",
+          "expected_source": "paper_III_sir_seir_identifiability",
           "relevant_in_top3": true,
           "top3_sources": [
-            "chunking_experiment_report",
-            "vector_store_notes",
-            "chunking_experiment_report"
+            "paper_III_sir_seir_identifiability",
+            "paper_III_sir_seir_identifiability",
+            "paper_III_sir_seir_identifiability"
           ],
-          "top1_preview": "The downside was that chunk sizes became less consistent, and some dense sections still exceeded ideal embedding length ",
-          "top1_score": 0.568,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\chunking_experiment_report.md, p.?) The downside was that chunk sizes"
+          "top1_preview": "focus more directly on practical identifiability in compartmental epidemic models [3, 23]. PRIM is complementary to thes",
+          "top1_score": 0.777,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_III_sir_seir_identifiability.txt, p.?) focus more directly on p"
         },
         {
           "id": 4,
-          "query": "Metadata giúp retrieval tránh nhầm tài liệu như thế nào?",
-          "gold_answer": "Metadata (phòng ban, ngôn ngữ, độ nhạy cảm, ngày cập nhật) giúp lọc tài liệu phù hợp, ví dụ tránh lấy marketing hoặc tài liệu tiếng Anh khi hỏi về tài liệu kỹ thuật tiếng Việt.",
-          "expected_source": "vi_retrieval_notes",
+          "query": "How does GARD allocate LoRA ranks using gradient spectral analysis?",
+          "gold_answer": "GARD estimates per-layer gradient covariance spectra, derives an effective dimensionality signal, and maps it to discrete LoRA ranks under a fixed global adapter parameter budget.",
+          "expected_source": "paper_V_gard_lora",
           "relevant_in_top3": true,
           "top3_sources": [
-            "vi_retrieval_notes",
-            "vi_retrieval_notes",
-            "vi_retrieval_notes"
+            "paper_V_gard_lora",
+            "paper_V_gard_lora",
+            "paper_V_gard_lora"
           ],
-          "top1_preview": "Khi người dùng hỏi về tài liệu kỹ thuật bằng tiếng Việt, bộ lọc metadata có thể giúp hệ thống tránh lấy nhầm các tài liệ",
-          "top1_score": 0.595,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vi_retrieval_notes.md, p.?) Khi người dùng hỏi về tài liệu kỹ thuật b"
+          "top1_preview": "GARD differs by explicitly modeling the diversity of gradient directions, rather than their magnitude alone, and by enfo",
+          "top1_score": 0.728,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_V_gard_lora.txt, p.?) GARD differs by explicitly modeling the d"
         },
         {
           "id": 5,
-          "query": "What are the four stages of a vector search pipeline?",
-          "gold_answer": "Chunk documents, embed each chunk, store the vector and metadata, then embed the query and rank stored vectors by similarity.",
-          "expected_source": "vector_store_notes",
+          "query": "Which Krylov preconditioners were compared on sparse linear systems?",
+          "gold_answer": "The study compares Jacobi, SSOR, ILU, and AMG preconditioners with Krylov solvers such as CG, GMRES, and BiCGSTAB on structured and unstructured sparse systems.",
+          "expected_source": "paper_IV_krylov_preconditioners",
           "relevant_in_top3": true,
           "top3_sources": [
-            "vector_store_notes",
-            "vector_store_notes",
-            "rag_system_design"
+            "paper_IV_krylov_preconditioners",
+            "paper_IV_krylov_preconditioners",
+            "paper_IV_krylov_preconditioners"
           ],
-          "top1_preview": "## Typical Workflow A common vector search pipeline has four stages: 1. **Chunk documents** into smaller units that pres",
-          "top1_score": 0.751,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vector_store_notes.md, p.?) ## Typical Workflow A common vector searc"
+          "top1_preview": "Comparative Analysis of Krylov Preconditioners on Sparse Linear Systems Preprint. Under review.",
+          "top1_score": 0.913,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_IV_krylov_preconditioners.txt, p.?) Comparative Analysis of Kry"
         }
       ]
     },
     "recursive_300": {
       "strategy": "recursive_300",
-      "chunk_count": 71,
+      "chunk_count": 1290,
       "relevant_top3": 5,
       "queries": [
         {
           "id": 1,
-          "query": "What should support articles avoid writing?",
-          "gold_answer": "Support articles should avoid vague statements such as 'check the settings' or 'contact engineering if needed.' They should specify the exact page, button, or log source.",
-          "expected_source": "customer_support_playbook",
+          "query": "What is MPCX and what finite-dimensional correction problem does it study?",
+          "gold_answer": "MPCX is a computational framework that compares finite-dimensional corrections to the Marchenko-Pastur law for Gaussian Wishart matrices, evaluating bulk-sensitive and edge-sensitive strategies for dimensions from 50 to 5000.",
+          "expected_source": "paper_I_random_matrix",
           "relevant_in_top3": true,
           "top3_sources": [
-            "customer_support_playbook",
-            "customer_support_playbook",
-            "rag_system_design"
+            "paper_I_random_matrix",
+            "paper_I_random_matrix",
+            "paper_I_random_matrix"
           ],
-          "top1_preview": "When writing support content, authors should avoid vague statements such as \"check the settings\" or \"contact engineering",
-          "top1_score": 0.517,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\customer_support_playbook.txt, p.?) When writing support content, aut"
+          "top1_preview": "problem in which deviations may concentrate near the support edges or follow low-order patterns with dimension and aspec",
+          "top1_score": 0.746,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_I_random_matrix.txt, p.?) problem in which deviations may conce"
         },
         {
           "id": 2,
-          "query": "What is the proposed architecture for the RAG system?",
-          "gold_answer": "Ingestion chunks documents and stores segments with metadata; retrieval embeds questions and applies optional metadata filters; the application layer builds a prompt from top retrieved chunks.",
-          "expected_source": "rag_system_design",
+          "query": "Which IV estimators formed the lowest-loss cluster in the IVX benchmark?",
+          "gold_answer": "LIML, Fuller(1), and Fuller(4) formed a tightly clustered low-loss group (metrics around 0.84), while 2SLS and JIVE had much larger losses.",
+          "expected_source": "paper_II_weak_iv_estimators",
           "relevant_in_top3": true,
           "top3_sources": [
-            "rag_system_design",
-            "rag_system_design",
-            "chunking_experiment_report"
+            "paper_II_weak_iv_estimators",
+            "paper_II_weak_iv_estimators",
+            "paper_II_weak_iv_estimators"
           ],
-          "top1_preview": "# RAG System Design for an Internal Knowledge Assistant ## Background",
-          "top1_score": 0.6,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\rag_system_design.md, p.?) # RAG System Design for an Internal Knowle"
+          "top1_preview": "classical IV estimators under a common linear model using a composite loss that combines RMSE, coverage shortfall, and n",
+          "top1_score": 0.629,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_II_weak_iv_estimators.txt, p.?) classical IV estimators under a"
         },
         {
           "id": 3,
-          "query": "Which chunking strategy performed best in the experiment?",
-          "gold_answer": "Recursive chunking offered the best balance: it preserved context while staying within the target size range.",
-          "expected_source": "chunking_experiment_report",
+          "query": "What is PRIM and what identifiability diagnostics does it compare for epidemic models?",
+          "gold_answer": "PRIM benchmarks structural and practical identifiability for SIR and SEIR models using profile likelihood, Fisher Information diagnostics, and maximum-likelihood estimation on synthetic outbreaks.",
+          "expected_source": "paper_III_sir_seir_identifiability",
           "relevant_in_top3": true,
           "top3_sources": [
-            "chunking_experiment_report",
-            "chunking_experiment_report",
-            "chunking_experiment_report"
+            "paper_III_sir_seir_identifiability",
+            "paper_III_sir_seir_identifiability",
+            "paper_III_sir_seir_identifiability"
           ],
-          "top1_preview": "Recursive chunking offered the best balance in the experiment. It first tried to split on larger structural boundaries s",
-          "top1_score": 0.717,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\chunking_experiment_report.md, p.?) Recursive chunking offered the be"
+          "top1_preview": "for epidemiological models [12]. Chen et al. and Saucedo et al. focus more directly on practical identifiability in comp",
+          "top1_score": 0.752,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_III_sir_seir_identifiability.txt, p.?) for epidemiological mode"
         },
         {
           "id": 4,
-          "query": "Metadata giúp retrieval tránh nhầm tài liệu như thế nào?",
-          "gold_answer": "Metadata (phòng ban, ngôn ngữ, độ nhạy cảm, ngày cập nhật) giúp lọc tài liệu phù hợp, ví dụ tránh lấy marketing hoặc tài liệu tiếng Anh khi hỏi về tài liệu kỹ thuật tiếng Việt.",
-          "expected_source": "vi_retrieval_notes",
+          "query": "How does GARD allocate LoRA ranks using gradient spectral analysis?",
+          "gold_answer": "GARD estimates per-layer gradient covariance spectra, derives an effective dimensionality signal, and maps it to discrete LoRA ranks under a fixed global adapter parameter budget.",
+          "expected_source": "paper_V_gard_lora",
           "relevant_in_top3": true,
           "top3_sources": [
-            "vi_retrieval_notes",
-            "vi_retrieval_notes",
-            "vi_retrieval_notes"
+            "paper_V_gard_lora",
+            "paper_V_gard_lora",
+            "paper_V_gard_lora"
           ],
-          "top1_preview": "Metadata cũng rất quan trọng. Ví dụ, một công ty có thể gắn nhãn tài liệu theo phòng ban, ngôn ngữ, độ nhạy cảm, hoặc ng",
-          "top1_score": 0.608,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vi_retrieval_notes.md, p.?) Metadata cũng rất quan trọng. Ví dụ, một "
+          "top1_preview": "Figure 4: Distribution of LoRA ranks allocated by GARD across transformer layers. Most layers receive low ranks while a ",
+          "top1_score": 0.79,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_V_gard_lora.txt, p.?) Figure 4: Distribution of LoRA ranks allo"
         },
         {
           "id": 5,
-          "query": "What are the four stages of a vector search pipeline?",
-          "gold_answer": "Chunk documents, embed each chunk, store the vector and metadata, then embed the query and rank stored vectors by similarity.",
-          "expected_source": "vector_store_notes",
+          "query": "Which Krylov preconditioners were compared on sparse linear systems?",
+          "gold_answer": "The study compares Jacobi, SSOR, ILU, and AMG preconditioners with Krylov solvers such as CG, GMRES, and BiCGSTAB on structured and unstructured sparse systems.",
+          "expected_source": "paper_IV_krylov_preconditioners",
           "relevant_in_top3": true,
           "top3_sources": [
-            "vector_store_notes",
-            "rag_system_design",
-            "vector_store_notes"
+            "paper_IV_krylov_preconditioners",
+            "paper_IV_krylov_preconditioners",
+            "paper_IV_krylov_preconditioners"
           ],
-          "top1_preview": "## Typical Workflow A common vector search pipeline has four stages:",
-          "top1_score": 0.868,
-          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vector_store_notes.md, p.?) ## Typical Workflow A common vector searc"
+          "top1_preview": "Comparative Analysis of Krylov Preconditioners on Sparse Linear Systems Preprint. Under review. Anonymous Abstract Preco",
+          "top1_score": 0.915,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\paper_IV_krylov_preconditioners.txt, p.?) Comparative Analysis of Kry"
         }
       ]
     }
   },
   "best_strategy": "fixed_size_300",
-  "my_strategy": "recursive_300",
+  "my_strategy": "fixed_size_300",
   "benchmark_queries": [
     {
       "id": 1,
-      "query": "What should support articles avoid writing?",
-      "gold_answer": "Support articles should avoid vague statements such as 'check the settings' or 'contact engineering if needed.' They should specify the exact page, button, or log source.",
-      "expected_source": "customer_support_playbook",
+      "query": "What is MPCX and what finite-dimensional correction problem does it study?",
+      "gold_answer": "MPCX is a computational framework that compares finite-dimensional corrections to the Marchenko-Pastur law for Gaussian Wishart matrices, evaluating bulk-sensitive and edge-sensitive strategies for dimensions from 50 to 5000.",
+      "expected_source": "paper_I_random_matrix",
       "filter": null
     },
     {
       "id": 2,
-      "query": "What is the proposed architecture for the RAG system?",
-      "gold_answer": "Ingestion chunks documents and stores segments with metadata; retrieval embeds questions and applies optional metadata filters; the application layer builds a prompt from top retrieved chunks.",
-      "expected_source": "rag_system_design",
+      "query": "Which IV estimators formed the lowest-loss cluster in the IVX benchmark?",
+      "gold_answer": "LIML, Fuller(1), and Fuller(4) formed a tightly clustered low-loss group (metrics around 0.84), while 2SLS and JIVE had much larger losses.",
+      "expected_source": "paper_II_weak_iv_estimators",
       "filter": null
     },
     {
       "id": 3,
-      "query": "Which chunking strategy performed best in the experiment?",
-      "gold_answer": "Recursive chunking offered the best balance: it preserved context while staying within the target size range.",
-      "expected_source": "chunking_experiment_report",
+      "query": "What is PRIM and what identifiability diagnostics does it compare for epidemic models?",
+      "gold_answer": "PRIM benchmarks structural and practical identifiability for SIR and SEIR models using profile likelihood, Fisher Information diagnostics, and maximum-likelihood estimation on synthetic outbreaks.",
+      "expected_source": "paper_III_sir_seir_identifiability",
       "filter": null
     },
     {
       "id": 4,
-      "query": "Metadata giúp retrieval tránh nhầm tài liệu như thế nào?",
-      "gold_answer": "Metadata (phòng ban, ngôn ngữ, độ nhạy cảm, ngày cập nhật) giúp lọc tài liệu phù hợp, ví dụ tránh lấy marketing hoặc tài liệu tiếng Anh khi hỏi về tài liệu kỹ thuật tiếng Việt.",
-      "expected_source": "vi_retrieval_notes",
+      "query": "How does GARD allocate LoRA ranks using gradient spectral analysis?",
+      "gold_answer": "GARD estimates per-layer gradient covariance spectra, derives an effective dimensionality signal, and maps it to discrete LoRA ranks under a fixed global adapter parameter budget.",
+      "expected_source": "paper_V_gard_lora",
       "filter": {
-        "language": "vi"
+        "category": "machine_learning"
       }
     },
     {
       "id": 5,
-      "query": "What are the four stages of a vector search pipeline?",
-      "gold_answer": "Chunk documents, embed each chunk, store the vector and metadata, then embed the query and rank stored vectors by similarity.",
-      "expected_source": "vector_store_notes",
+      "query": "Which Krylov preconditioners were compared on sparse linear systems?",
+      "gold_answer": "The study compares Jacobi, SSOR, ILU, and AMG preconditioners with Krylov solvers such as CG, GMRES, and BiCGSTAB on structured and unstructured sparse systems.",
+      "expected_source": "paper_IV_krylov_preconditioners",
       "filter": null
     }
   ]

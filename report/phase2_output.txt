@@ -1,31 +1,31 @@
 ========================================================================
 PHASE 2 — DOCUMENT INVENTORY
 ========================================================================
-1. data\customer_support_playbook.txt | 1692 chars | category=support | language=en
-2. data\python_intro.txt | 1944 chars | category=technical | language=en
-3. data\vector_store_notes.md | 2123 chars | category=technical | language=en
-4. data\rag_system_design.md | 2391 chars | category=technical | language=en
-5. data\chunking_experiment_report.md | 1987 chars | category=technical | language=en
-6. data\vi_retrieval_notes.md | 1667 chars | category=technical | language=vi
+1. data\paper_I_random_matrix.txt | 54622 chars | category=statistics | language=en
+2. data\paper_II_weak_iv_estimators.txt | 42390 chars | category=econometrics | language=en
+3. data\paper_III_sir_seir_identifiability.txt | 56000 chars | category=epidemiology | language=en
+4. data\paper_IV_krylov_preconditioners.txt | 51431 chars | category=numerical_methods | language=en
+5. data\paper_V_gard_lora.txt | 55603 chars | category=machine_learning | language=en
+6. data\paper_VI_lace_exploration.txt | 31079 chars | category=reinforcement_learning | language=en
 
 ========================================================================
 PHASE 2 — BASELINE CHUNKING (ChunkingStrategyComparator)
 ========================================================================
 
-customer_support_playbook.txt
-  - fixed_size: count=10, avg_length=187.2
-  - by_sentences: count=4, avg_length=421.0
-  - recursive: count=14, avg_length=119.1
+paper_I_random_matrix.txt
+  - fixed_size: count=304, avg_length=199.6
+  - by_sentences: count=140, avg_length=389.1
+  - recursive: count=358, avg_length=151.3
 
-chunking_experiment_report.md
-  - fixed_size: count=11, avg_length=198.8
-  - by_sentences: count=5, avg_length=395.6
-  - recursive: count=18, avg_length=108.4
+paper_III_sir_seir_identifiability.txt
+  - fixed_size: count=311, avg_length=200.0
+  - by_sentences: count=162, avg_length=344.6
+  - recursive: count=374, avg_length=148.5
 
-vi_retrieval_notes.md
-  - fixed_size: count=10, avg_length=184.7
-  - by_sentences: count=5, avg_length=331.6
-  - recursive: count=13, avg_length=126.3
+paper_V_gard_lora.txt
+  - fixed_size: count=309, avg_length=199.9
+  - by_sentences: count=135, avg_length=410.7
+  - recursive: count=366, avg_length=150.7
 
 ========================================================================
 PHASE 2 — SIMILARITY PREDICTIONS (all-MiniLM-L6-v2)
@@ -50,29 +50,29 @@ PHASE 2 — SIMILARITY PREDICTIONS (all-MiniLM-L6-v2)
 PHASE 2 — RETRIEVAL BENCHMARK BY STRATEGY (all-MiniLM-L6-v2)
 ========================================================================
 
-fixed_size_300: chunks=49 | relevant_top3=5/5
-  [OK] Q1: What should support articles avoid writing?... | top1=xed documents should contain clear issue descriptions, step-by-step re... | score=0.506
-  [OK] Q2: What is the proposed architecture for the RAG system?... | top1=# RAG System Design for an Internal Knowledge Assistant ## Background ... | score=0.402
-  [OK] Q3: Which chunking strategy performed best in the experiment?... | top1=e chunking offered the best balance in the experiment. It first tried ... | score=0.719
-  [OK] Q4: Metadata giúp retrieval tránh nhầm tài liệu như thế nào?... | top1=ể gắn nhãn tài liệu theo phòng ban, ngôn ngữ, độ nhạy cảm, hoặc ngày c... | score=0.588
-  [OK] Q5: What are the four stages of a vector search pipeline?... | top1=lustering workflows, and retrieval-augmented generation. ## Typical Wo... | score=0.752
+fixed_size_300: chunks=1167 | relevant_top3=5/5
+  [OK] Q1: What is MPCX and what finite-dimensional correction problem ... | top1=, which is classical, but how finite-dimensional spectra deviate from ... | score=0.736
+  [OK] Q2: Which IV estimators formed the lowest-loss cluster in the IV... | top1=cent 2 Figure 1: Overview of the IVX evaluation framework. The pipelin... | score=0.635
+  [OK] Q3: What is PRIM and what identifiability diagnostics does it co... | top1=. Chen et al. and Saucedo et al. focus more directly on practical iden... | score=0.804
+  [OK] Q4: How does GARD allocate LoRA ranks using gradient spectral an... | top1=he additional compute and memory overhead relative to plain LoRA on la... | score=0.759
+  [OK] Q5: Which Krylov preconditioners were compared on sparse linear ... | top1=Comparative Analysis of Krylov Preconditioners on Sparse Linear System... | score=0.904
 
-sentence_2: chunks=49 | relevant_top3=5/5
-  [OK] Q1: What should support articles avoid writing?... | top1=When writing support content, authors should avoid vague statements su... | score=0.51
-  [OK] Q2: What is the proposed architecture for the RAG system?... | top1=# RAG System Design for an Internal Knowledge Assistant ## Background ... | score=0.446
-  [OK] Q3: Which chunking strategy performed best in the experiment?... | top1=The downside was that chunk sizes became less consistent, and some den... | score=0.568
-  [OK] Q4: Metadata giúp retrieval tránh nhầm tài liệu như thế nào?... | top1=Khi người dùng hỏi về tài liệu kỹ thuật bằng tiếng Việt, bộ lọc metada... | score=0.595
-  [OK] Q5: What are the four stages of a vector search pipeline?... | top1=## Typical Workflow A common vector search pipeline has four stages: 1... | score=0.751
+sentence_2: chunks=1199 | relevant_top3=5/5
+  [OK] Q1: What is MPCX and what finite-dimensional correction problem ... | top1=MPCX differs by treating the Wishart spectrum itself as the primary ob... | score=0.705
+  [OK] Q2: Which IV estimators formed the lowest-loss cluster in the IV... | top1=More recent 2 Figure 1: Overview of the IVX evaluation framework. The ... | score=0.632
+  [OK] Q3: What is PRIM and what identifiability diagnostics does it co... | top1=focus more directly on practical identifiability in compartmental epid... | score=0.777
+  [OK] Q4: How does GARD allocate LoRA ranks using gradient spectral an... | top1=GARD differs by explicitly modeling the diversity of gradient directio... | score=0.728
+  [OK] Q5: Which Krylov preconditioners were compared on sparse linear ... | top1=Comparative Analysis of Krylov Preconditioners on Sparse Linear System... | score=0.913
 
-recursive_300: chunks=71 | relevant_top3=5/5
-  [OK] Q1: What should support articles avoid writing?... | top1=When writing support content, authors should avoid vague statements su... | score=0.517
-  [OK] Q2: What is the proposed architecture for the RAG system?... | top1=# RAG System Design for an Internal Knowledge Assistant ## Background... | score=0.6
-  [OK] Q3: Which chunking strategy performed best in the experiment?... | top1=Recursive chunking offered the best balance in the experiment. It firs... | score=0.717
-  [OK] Q4: Metadata giúp retrieval tránh nhầm tài liệu như thế nào?... | top1=Metadata cũng rất quan trọng. Ví dụ, một công ty có thể gắn nhãn tài l... | score=0.608
-  [OK] Q5: What are the four stages of a vector search pipeline?... | top1=## Typical Workflow A common vector search pipeline has four stages:... | score=0.868
+recursive_300: chunks=1290 | relevant_top3=5/5
+  [OK] Q1: What is MPCX and what finite-dimensional correction problem ... | top1=problem in which deviations may concentrate near the support edges or ... | score=0.746
+  [OK] Q2: Which IV estimators formed the lowest-loss cluster in the IV... | top1=classical IV estimators under a common linear model using a composite ... | score=0.629
+  [OK] Q3: What is PRIM and what identifiability diagnostics does it co... | top1=for epidemiological models [12]. Chen et al. and Saucedo et al. focus ... | score=0.752
+  [OK] Q4: How does GARD allocate LoRA ranks using gradient spectral an... | top1=Figure 4: Distribution of LoRA ranks allocated by GARD across transfor... | score=0.79
+  [OK] Q5: Which Krylov preconditioners were compared on sparse linear ... | top1=Comparative Analysis of Krylov Preconditioners on Sparse Linear System... | score=0.915
 
 ========================================================================
 PHASE 2 — SUMMARY
 ========================================================================
 Best retrieval strategy: fixed_size_300 (5/5)
-My chosen strategy: recursive_300 (5/5)
+My chosen strategy: fixed_size_300 (5/5)

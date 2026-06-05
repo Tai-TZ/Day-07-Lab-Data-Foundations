@@ -124,16 +124,12 @@ PY
 ├── README.md              ← Bạn đang đọc file này
 ├── exercises.md           ← Bài tập (4 phần)
 ├── main.py               ← Entry point cho manual demo
-├── rag_api.py            ← Backend API cho RAG Workflow Studio
-├── app.py                ← Streamlit UI (tùy chọn, từ nhánh dev)
-├── src/                  ← Python lab package
+├── src/
 │   ├── chunking.py       ← Chunking classes + similarity helper
 │   ├── store.py          ← EmbeddingStore
 │   ├── agent.py          ← KnowledgeBaseAgent
-│   └── ...
-├── studio/               ← RAG Workflow Studio UI ([rag-reveal](https://github.com/NguyenTrongNguyen04/rag-reveal))
-├── ui/                   ← Helpers cho Streamlit
-├── data/                 ← Tài liệu mẫu + upload (.md/.txt)
+│   └── ...               ← Các module nhỏ hơn
+├── data/                  ← Tài liệu mẫu + tài liệu nhóm (.txt/.md)
 ├── tests/
 │   └── test_solution.py   ← Test suite (30+ tests)
 ├── report/
@@ -144,33 +140,6 @@ PY
 │   └── SCORING.md        ← Tiêu chí chấm điểm
 └── requirements.txt
 ```
-
----
-
-## RAG Workflow Studio (UI)
-
-Toàn bộ dự án nằm trong **một folder** `Day-07-Lab-Data-Foundations/`. Giao diện whiteboard pipeline nằm trong `studio/`, kết nối backend `rag_api.py` với **embedding thật** `all-MiniLM-L6-v2` (384-dim, cosine similarity).
-
-```bash
-# Terminal 1 — backend (thư mục gốc lab)
-pip install -r requirements.txt
-copy .env.example .env
-python -m uvicorn rag_api:app --reload --port 8000
-
-# Terminal 2 — frontend
-cd studio
-npm install
-copy .env.example .env
-npm run dev
-```
-
-Mở URL do Vite in ra (thường `http://localhost:8080`). Upload file `.md` trực tiếp trên UI (lưu vào `data/uploads/`).
-
-**Lần chạy đầu:** backend tải model MiniLM (~80MB). UI sẽ chờ `/health` báo `ok: true` (có thể 30–90 giây). Nếu `sentence-transformers` lỗi trên Python 3.14, backend tự fallback sang `fastembed` ONNX.
-
-**Tùy chọn OpenAI chat:** đặt `OPENAI_API_KEY` trong `.env` để dùng LLM thật thay vì trích xuất grounded.
-
-**Streamlit UI (tùy chọn):** `streamlit run app.py`
 
 ---
 
@@ -256,51 +225,6 @@ Xem chi tiết tại `docs/SCORING.md`. Tóm tắt:
 
 1. `src/` — hoàn thành tất cả TODO cần thiết
 2. `report/REPORT.md` — một báo cáo/sinh viên (gồm cả phần nhóm và cá nhân)
-
----
-
-## Run UI
-
-Giao diện web Streamlit cho lab (index tài liệu, RAG chat, chunking lab, benchmark).
-
-```bash
-pip install -r requirements-ui.txt
-py -m streamlit run app.py
-```
-
-Hoặc dùng `requirements.txt` nếu đã cài đủ dependencies:
-
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-**4 tab chính:**
-- **Documents** — chọn file trong `data/`, index vào `EmbeddingStore`
-- **Ask** — hỏi đáp RAG với top-k chunks + câu trả lời agent (mock LLM mặc định)
-- **Chunking Lab** — so sánh fixed / sentence / recursive chunking
-- **Benchmark** — chạy batch queries, đánh giá relevance, export JSON/CSV
-
-Sidebar cho phép đổi `EMBEDDING_PROVIDER` (mock/local/openai) và `top_k`. Nếu có `OPENAI_API_KEY` trong `.env`, có thể bật OpenAI chat ở tab Ask.
-
-`main.py` và `pytest` vẫn chạy độc lập, không phụ thuộc UI.
-
----
-
-## Chạy Phase 2 (Benchmark — Terminal)
-
-Script `phase2_benchmark.py` chạy toàn bộ Phase 2 không cần UI:
-
-```bash
-py phase2_benchmark.py
-py phase2_benchmark.py --export report/phase2_results.json
-```
-
-Script sẽ:
-- Liệt kê bộ tài liệu trong `data/` kèm metadata
-- Chạy baseline `ChunkingStrategyComparator` trên 3 file
-- Chạy 5 benchmark queries với 3 chunking strategies
-- Chạy similarity predictions và xuất JSON cho `report/REPORT.md`
 
 ---
 
