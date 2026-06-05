@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import math
 import re
@@ -101,7 +101,7 @@ class RecursiveChunker:
         sep = remaining_separators[0]
         rest = remaining_separators[1:]
 
-        # Empty separator means "can't split" → fixed-size.
+        # Empty separator means "can't split" -> fixed-size.
         if sep == "":
             return FixedSizeChunker(chunk_size=self.chunk_size, overlap=0).chunk(current_text)
 

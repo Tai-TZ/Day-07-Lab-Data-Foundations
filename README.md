@@ -247,6 +247,51 @@ Xem chi tiết tại `docs/SCORING.md`. Tóm tắt:
 
 ---
 
+## Run UI
+
+Giao diện web Streamlit cho lab (index tài liệu, RAG chat, chunking lab, benchmark).
+
+```bash
+pip install -r requirements-ui.txt
+py -m streamlit run app.py
+```
+
+Hoặc dùng `requirements.txt` nếu đã cài đủ dependencies:
+
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+**4 tab chính:**
+- **Documents** — chọn file trong `data/`, index vào `EmbeddingStore`
+- **Ask** — hỏi đáp RAG với top-k chunks + câu trả lời agent (mock LLM mặc định)
+- **Chunking Lab** — so sánh fixed / sentence / recursive chunking
+- **Benchmark** — chạy batch queries, đánh giá relevance, export JSON/CSV
+
+Sidebar cho phép đổi `EMBEDDING_PROVIDER` (mock/local/openai) và `top_k`. Nếu có `OPENAI_API_KEY` trong `.env`, có thể bật OpenAI chat ở tab Ask.
+
+`main.py` và `pytest` vẫn chạy độc lập, không phụ thuộc UI.
+
+---
+
+## Chạy Phase 2 (Benchmark — Terminal)
+
+Script `phase2_benchmark.py` chạy toàn bộ Phase 2 không cần UI:
+
+```bash
+py phase2_benchmark.py
+py phase2_benchmark.py --export report/phase2_results.json
+```
+
+Script sẽ:
+- Liệt kê bộ tài liệu trong `data/` kèm metadata
+- Chạy baseline `ChunkingStrategyComparator` trên 3 file
+- Chạy 5 benchmark queries với 3 chunking strategies
+- Chạy similarity predictions và xuất JSON cho `report/REPORT.md`
+
+---
+
 ## Chạy Kiểm Thử
 
 ```bash
