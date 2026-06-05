@@ -1,4 +1,44 @@
 {
+  "embedder": "all-MiniLM-L6-v2",
+  "document_count": 6,
+  "document_inventory": [
+    {
+      "source": "data\\customer_support_playbook.txt",
+      "chars": 1692,
+      "category": "support",
+      "language": "en"
+    },
+    {
+      "source": "data\\python_intro.txt",
+      "chars": 1944,
+      "category": "technical",
+      "language": "en"
+    },
+    {
+      "source": "data\\vector_store_notes.md",
+      "chars": 2123,
+      "category": "technical",
+      "language": "en"
+    },
+    {
+      "source": "data\\rag_system_design.md",
+      "chars": 2391,
+      "category": "technical",
+      "language": "en"
+    },
+    {
+      "source": "data\\chunking_experiment_report.md",
+      "chars": 1987,
+      "category": "technical",
+      "language": "en"
+    },
+    {
+      "source": "data\\vi_retrieval_notes.md",
+      "chars": 1667,
+      "category": "technical",
+      "language": "vi"
+    }
+  ],
   "document_catalog": [
     {
       "path": "customer_support_playbook.txt",
@@ -46,94 +86,99 @@
   "baseline": {
     "customer_support_playbook.txt": {
       "fixed_size": {
-        "count": 9,
-        "avg_length": 188.0
+        "count": 10,
+        "avg_length": 187.2
       },
       "by_sentences": {
         "count": 4,
-        "avg_length": 418.2
+        "avg_length": 421.0
       },
       "recursive": {
         "count": 14,
-        "avg_length": 124.0
+        "avg_length": 119.1
       }
     },
     "chunking_experiment_report.md": {
       "fixed_size": {
-        "count": 10,
-        "avg_length": 198.7
+        "count": 11,
+        "avg_length": 198.8
       },
       "by_sentences": {
         "count": 5,
-        "avg_length": 392.6
+        "avg_length": 395.6
       },
       "recursive": {
         "count": 18,
-        "avg_length": 109.2
+        "avg_length": 108.4
       }
     },
     "vi_retrieval_notes.md": {
       "fixed_size": {
-        "count": 9,
-        "avg_length": 185.2
+        "count": 10,
+        "avg_length": 184.7
       },
       "by_sentences": {
         "count": 5,
-        "avg_length": 328.8
+        "avg_length": 331.6
       },
       "recursive": {
         "count": 13,
-        "avg_length": 127.2
+        "avg_length": 126.3
       }
     }
   },
   "similarity_predictions": [
     {
+      "embedder": "all-MiniLM-L6-v2",
       "sentence_a": "Python is widely used for machine learning and data analysis.",
       "sentence_b": "Teams use Python for ML workflows and data science tasks.",
       "prediction": "high",
-      "actual_score": -0.0882,
-      "actual_label": "low",
-      "correct": false
+      "actual_score": 0.7071,
+      "actual_label": "high",
+      "correct": true
     },
     {
+      "embedder": "all-MiniLM-L6-v2",
       "sentence_a": "Vector stores retrieve similar embeddings for semantic search.",
       "sentence_b": "A vector database ranks chunks by similarity to the query.",
       "prediction": "high",
-      "actual_score": -0.015,
-      "actual_label": "low",
-      "correct": false
+      "actual_score": 0.598,
+      "actual_label": "high",
+      "correct": true
     },
     {
+      "embedder": "all-MiniLM-L6-v2",
       "sentence_a": "Customer support articles should use specific troubleshooting steps.",
       "sentence_b": "The billing API deployment requires Kubernetes credentials.",
       "prediction": "low",
-      "actual_score": -0.0134,
+      "actual_score": 0.1409,
       "actual_label": "low",
       "correct": true
     },
     {
+      "embedder": "all-MiniLM-L6-v2",
       "sentence_a": "Chunking splits documents into smaller retrieval units.",
       "sentence_b": "Recursive chunking tries paragraph boundaries before smaller splits.",
       "prediction": "high",
-      "actual_score": -0.0083,
-      "actual_label": "low",
-      "correct": false
+      "actual_score": 0.6051,
+      "actual_label": "high",
+      "correct": true
     },
     {
+      "embedder": "all-MiniLM-L6-v2",
       "sentence_a": "Python is a programming language used for automation.",
       "sentence_b": "Chocolate cake recipes need flour, eggs, and sugar.",
       "prediction": "low",
-      "actual_score": 0.0739,
-      "actual_label": "high",
-      "correct": false
+      "actual_score": -0.0737,
+      "actual_label": "low",
+      "correct": true
     }
   ],
   "strategy_results": {
     "fixed_size_300": {
       "strategy": "fixed_size_300",
       "chunk_count": 49,
-      "relevant_top3": 3,
+      "relevant_top3": 5,
       "queries": [
         {
           "id": 1,
@@ -142,28 +187,28 @@
           "expected_source": "customer_support_playbook",
           "relevant_in_top3": true,
           "top3_sources": [
-            "chunking_experiment_report",
             "customer_support_playbook",
-            "rag_system_design"
+            "customer_support_playbook",
+            "customer_support_playbook"
           ],
-          "top1_preview": "d but omitted the actual instruction. ## Sentence-Based Chunking Sentence-based chunking improved readability because ea",
-          "top1_score": -0.499,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: d but omitted the actual instruction. ## Sentence-Based Chunking Sentence-based chunking improved readability "
+          "top1_preview": "xed documents should contain clear issue descriptions, step-by-step resolutions, escalation criteria, and references to ",
+          "top1_score": 0.506,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\customer_support_playbook.txt, p.?) xed documents should contain clea"
         },
         {
           "id": 2,
           "query": "What is the proposed architecture for the RAG system?",
           "gold_answer": "Ingestion chunks documents and stores segments with metadata; retrieval embeds questions and applies optional metadata filters; the application layer builds a prompt from top retrieved chunks.",
           "expected_source": "rag_system_design",
-          "relevant_in_top3": false,
+          "relevant_in_top3": true,
           "top3_sources": [
-            "vector_store_notes",
-            "chunking_experiment_report",
-            "customer_support_playbook"
+            "rag_system_design",
+            "rag_system_design",
+            "vi_retrieval_notes"
           ],
-          "top1_preview": "# Vector Store Notes A vector store is a database or storage layer designed to keep embeddings and retrieve the most sim",
-          "top1_score": -0.394,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: # Vector Store Notes A vector store is a database or storage layer designed to keep embeddings and retrieve th"
+          "top1_preview": "# RAG System Design for an Internal Knowledge Assistant ## Background A product team wants an assistant that can answer ",
+          "top1_score": 0.402,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\rag_system_design.md, p.?) # RAG System Design for an Internal Knowle"
         },
         {
           "id": 3,
@@ -173,12 +218,12 @@
           "relevant_in_top3": true,
           "top3_sources": [
             "chunking_experiment_report",
-            "python_intro",
-            "vi_retrieval_notes"
+            "chunking_experiment_report",
+            "chunking_experiment_report"
           ],
-          "top1_preview": "nking is a strong default for mixed technical documentation. Teams should still validate this assumption with their own ",
-          "top1_score": -0.561,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: nking is a strong default for mixed technical documentation. Teams should still validate this assumption with "
+          "top1_preview": "e chunking offered the best balance in the experiment. It first tried to split on larger structural boundaries such as p",
+          "top1_score": 0.719,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\chunking_experiment_report.md, p.?) e chunking offered the best balan"
         },
         {
           "id": 4,
@@ -192,75 +237,75 @@
             "vi_retrieval_notes"
           ],
           "top1_preview": "ể gắn nhãn tài liệu theo phòng ban, ngôn ngữ, độ nhạy cảm, hoặc ngày cập nhật. Khi người dùng hỏi về tài liệu kỹ thuật b",
-          "top1_score": 0.09,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: ineering if needed.\" Instead, each article should specify the exact page, button, or log source that an agent "
+          "top1_score": 0.588,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vi_retrieval_notes.md, p.?) ể gắn nhãn tài liệu theo phòng ban, ngôn "
         },
         {
           "id": 5,
           "query": "What are the four stages of a vector search pipeline?",
           "gold_answer": "Chunk documents, embed each chunk, store the vector and metadata, then embed the query and rank stored vectors by similarity.",
           "expected_source": "vector_store_notes",
-          "relevant_in_top3": false,
+          "relevant_in_top3": true,
           "top3_sources": [
-            "vi_retrieval_notes",
-            "customer_support_playbook",
-            "rag_system_design"
+            "vector_store_notes",
+            "vector_store_notes",
+            "chunking_experiment_report"
           ],
-          "top1_preview": "# Ghi chú về Retrieval cho Trợ lý Tri thức Nội bộ Trong một hệ thống trợ lý tri thức nội bộ, retrieval đóng vai trò tìm ",
-          "top1_score": -0.401,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: # Ghi chú về Retrieval cho Trợ lý Tri thức Nội bộ Trong một hệ thống trợ lý tri thức nội bộ, retrieval đóng va"
+          "top1_preview": "lustering workflows, and retrieval-augmented generation. ## Typical Workflow A common vector search pipeline has four st",
+          "top1_score": 0.752,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vector_store_notes.md, p.?) lustering workflows, and retrieval-augmen"
         }
       ]
     },
     "sentence_2": {
       "strategy": "sentence_2",
       "chunk_count": 49,
-      "relevant_top3": 2,
+      "relevant_top3": 5,
       "queries": [
         {
           "id": 1,
           "query": "What should support articles avoid writing?",
           "gold_answer": "Support articles should avoid vague statements such as 'check the settings' or 'contact engineering if needed.' They should specify the exact page, button, or log source.",
           "expected_source": "customer_support_playbook",
-          "relevant_in_top3": false,
+          "relevant_in_top3": true,
           "top3_sources": [
-            "rag_system_design",
-            "chunking_experiment_report",
-            "python_intro"
+            "customer_support_playbook",
+            "customer_support_playbook",
+            "customer_support_playbook"
           ],
-          "top1_preview": "A useful test plan includes comparing chunking strategies, checking whether metadata filters improve relevance, and reco",
-          "top1_score": -0.375,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: A useful test plan includes comparing chunking strategies, checking whether metadata filters improve relevance"
+          "top1_preview": "When writing support content, authors should avoid vague statements such as \"check the settings\" or \"contact engineering",
+          "top1_score": 0.51,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\customer_support_playbook.txt, p.?) When writing support content, aut"
         },
         {
           "id": 2,
           "query": "What is the proposed architecture for the RAG system?",
           "gold_answer": "Ingestion chunks documents and stores segments with metadata; retrieval embeds questions and applies optional metadata filters; the application layer builds a prompt from top retrieved chunks.",
           "expected_source": "rag_system_design",
-          "relevant_in_top3": false,
+          "relevant_in_top3": true,
           "top3_sources": [
-            "chunking_experiment_report",
-            "vector_store_notes",
-            "chunking_experiment_report"
+            "rag_system_design",
+            "rag_system_design",
+            "vi_retrieval_notes"
           ],
-          "top1_preview": "However, some chunks split explanations in awkward places, especially when a procedure spanned multiple sentences In tho",
-          "top1_score": -0.169,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: However, some chunks split explanations in awkward places, especially when a procedure spanned multiple senten"
+          "top1_preview": "# RAG System Design for an Internal Knowledge Assistant ## Background A product team wants an assistant that can answer ",
+          "top1_score": 0.446,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\rag_system_design.md, p.?) # RAG System Design for an Internal Knowle"
         },
         {
           "id": 3,
           "query": "Which chunking strategy performed best in the experiment?",
           "gold_answer": "Recursive chunking offered the best balance: it preserved context while staying within the target size range.",
           "expected_source": "chunking_experiment_report",
-          "relevant_in_top3": false,
+          "relevant_in_top3": true,
           "top3_sources": [
-            "vi_retrieval_notes",
-            "customer_support_playbook",
-            "vector_store_notes"
+            "chunking_experiment_report",
+            "vector_store_notes",
+            "chunking_experiment_report"
           ],
-          "top1_preview": "Khi người dùng hỏi về tài liệu kỹ thuật bằng tiếng Việt, bộ lọc metadata có thể giúp hệ thống tránh lấy nhầm các tài liệ",
-          "top1_score": -0.534,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: Khi người dùng hỏi về tài liệu kỹ thuật bằng tiếng Việt, bộ lọc metadata có thể giúp hệ thống tránh lấy nhầm c"
+          "top1_preview": "The downside was that chunk sizes became less consistent, and some dense sections still exceeded ideal embedding length ",
+          "top1_score": 0.568,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\chunking_experiment_report.md, p.?) The downside was that chunk sizes"
         },
         {
           "id": 4,
@@ -273,9 +318,9 @@
             "vi_retrieval_notes",
             "vi_retrieval_notes"
           ],
-          "top1_preview": "Metadata cũng rất quan trọng Ví dụ, một công ty có thể gắn nhãn tài liệu theo phòng ban, ngôn ngữ, độ nhạy cảm, hoặc ngà",
-          "top1_score": 0.116,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: # RAG System Design for an Internal Knowledge Assistant ## Background A product team wants an assistant that c"
+          "top1_preview": "Khi người dùng hỏi về tài liệu kỹ thuật bằng tiếng Việt, bộ lọc metadata có thể giúp hệ thống tránh lấy nhầm các tài liệ",
+          "top1_score": 0.595,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vi_retrieval_notes.md, p.?) Khi người dùng hỏi về tài liệu kỹ thuật b"
         },
         {
           "id": 5,
@@ -285,49 +330,49 @@
           "relevant_in_top3": true,
           "top3_sources": [
             "vector_store_notes",
-            "rag_system_design",
-            "vector_store_notes"
+            "vector_store_notes",
+            "rag_system_design"
           ],
-          "top1_preview": "4 **Embed the query** and rank stored vectors by similarity",
-          "top1_score": -0.267,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: 4 **Embed the query** and rank stored vectors by similarity That feedback loop is essential for improving both"
+          "top1_preview": "## Typical Workflow A common vector search pipeline has four stages: 1. **Chunk documents** into smaller units that pres",
+          "top1_score": 0.751,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vector_store_notes.md, p.?) ## Typical Workflow A common vector searc"
         }
       ]
     },
     "recursive_300": {
       "strategy": "recursive_300",
       "chunk_count": 71,
-      "relevant_top3": 3,
+      "relevant_top3": 5,
       "queries": [
         {
           "id": 1,
           "query": "What should support articles avoid writing?",
           "gold_answer": "Support articles should avoid vague statements such as 'check the settings' or 'contact engineering if needed.' They should specify the exact page, button, or log source.",
           "expected_source": "customer_support_playbook",
-          "relevant_in_top3": false,
+          "relevant_in_top3": true,
           "top3_sources": [
-            "chunking_experiment_report",
-            "rag_system_design",
-            "vector_store_notes"
+            "customer_support_playbook",
+            "customer_support_playbook",
+            "rag_system_design"
           ],
-          "top1_preview": "Recursive chunking offered the best balance in the experiment. . It first tried to split on larger structural boundaries",
-          "top1_score": -0.478,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: Recursive chunking offered the best balance in the experiment. . It first tried to split on larger structural "
+          "top1_preview": "When writing support content, authors should avoid vague statements such as \"check the settings\" or \"contact engineering",
+          "top1_score": 0.517,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\customer_support_playbook.txt, p.?) When writing support content, aut"
         },
         {
           "id": 2,
           "query": "What is the proposed architecture for the RAG system?",
           "gold_answer": "Ingestion chunks documents and stores segments with metadata; retrieval embeds questions and applies optional metadata filters; the application layer builds a prompt from top retrieved chunks.",
           "expected_source": "rag_system_design",
-          "relevant_in_top3": false,
+          "relevant_in_top3": true,
           "top3_sources": [
-            "chunking_experiment_report",
-            "customer_support_playbook",
-            "vi_retrieval_notes"
+            "rag_system_design",
+            "rag_system_design",
+            "chunking_experiment_report"
           ],
-          "top1_preview": "The experiment suggests that there is no universal best strategy, but recursive chunking is a strong default for mixed t",
-          "top1_score": -0.348,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: The experiment suggests that there is no universal best strategy, but recursive chunking is a strong default f"
+          "top1_preview": "# RAG System Design for an Internal Knowledge Assistant ## Background",
+          "top1_score": 0.6,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\rag_system_design.md, p.?) # RAG System Design for an Internal Knowle"
         },
         {
           "id": 3,
@@ -336,13 +381,13 @@
           "expected_source": "chunking_experiment_report",
           "relevant_in_top3": true,
           "top3_sources": [
-            "rag_system_design",
-            "rag_system_design",
+            "chunking_experiment_report",
+            "chunking_experiment_report",
             "chunking_experiment_report"
           ],
-          "top1_preview": "Example failure cases might include outdated documents outranking current runbooks, small chunks losing critical caveats",
-          "top1_score": -0.382,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: Example failure cases might include outdated documents outranking current runbooks, small chunks losing critic"
+          "top1_preview": "Recursive chunking offered the best balance in the experiment. It first tried to split on larger structural boundaries s",
+          "top1_score": 0.717,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\chunking_experiment_report.md, p.?) Recursive chunking offered the be"
         },
         {
           "id": 4,
@@ -355,9 +400,9 @@
             "vi_retrieval_notes",
             "vi_retrieval_notes"
           ],
-          "top1_preview": "Chất lượng chunking ảnh hưởng trực tiếp đến chất lượng retrieval. . Nếu chunk quá ngắn, hệ thống có thể trả về các câu r",
-          "top1_score": 0.177,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: As the document set grows, the team should track re-indexing behavior, document deletion, and source freshness"
+          "top1_preview": "Metadata cũng rất quan trọng. Ví dụ, một công ty có thể gắn nhãn tài liệu theo phòng ban, ngôn ngữ, độ nhạy cảm, hoặc ng",
+          "top1_score": 0.608,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vi_retrieval_notes.md, p.?) Metadata cũng rất quan trọng. Ví dụ, một "
         },
         {
           "id": 5,
@@ -367,12 +412,12 @@
           "relevant_in_top3": true,
           "top3_sources": [
             "vector_store_notes",
-            "chunking_experiment_report",
-            "vi_retrieval_notes"
+            "rag_system_design",
+            "vector_store_notes"
           ],
-          "top1_preview": "That is why teams should test retrieval quality with realistic queries, compare filtered versus unfiltered search, and i",
-          "top1_score": -0.36,
-          "agent_answer_preview": "[MOCK LLM] Use the following context to answer the question. Context: That is why teams should test retrieval quality with realistic queries, compare filtered versus unfiltered sea"
+          "top1_preview": "## Typical Workflow A common vector search pipeline has four stages:",
+          "top1_score": 0.868,
+          "agent_answer_preview": "[MOCK LLM] Answer the question using ONLY the context below. Cite sources as [1], [2], etc. Context: [1] (data\\vector_store_notes.md, p.?) ## Typical Workflow A common vector searc"
         }
       ]
     }

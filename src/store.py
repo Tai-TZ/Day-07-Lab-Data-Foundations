@@ -3,7 +3,7 @@
 import os
 from typing import Any, Callable
 
-from .chunking import _dot
+from .chunking import compute_similarity
 from .embeddings import _mock_embed
 from .models import Document
 
@@ -63,7 +63,7 @@ class EmbeddingStore:
         q_emb = self._embedding_fn(query or "")
         scored: list[dict[str, Any]] = []
         for r in records:
-            score = float(_dot(q_emb, r["embedding"]))
+            score = float(compute_similarity(q_emb, r["embedding"]))
             scored.append(
                 {
                     "id": r["id"],
@@ -194,3 +194,37 @@ class EmbeddingStore:
         before = len(self._store)
         self._store = [r for r in self._store if (r.get("metadata") or {}).get("doc_id") != doc_id]
         return len(self._store) < before
+
+    def clear(self) -> None:
+        """Remove all stored chunks from the in-memory backend."""
+        self._store = []
+        self._next_index = 0
+        if self._use_chroma and self._collection is not None:
+            try:
+                self._collection.delete(where={})
+            except Exception:
+                pass
+
+    def list_records(self) -> list[dict[str, Any]]:
+        """Return all indexed chunk records (including embeddings)."""
+        if self._use_chroma and self._collection is not None:
+            try:
+                result = self._collection.get(include=["documents", "metadatas", "embeddings"])
+                records: list[dict[str, Any]] = []
+                ids = result.get("ids") or []
+                docs = result.get("documents") or []
+                metas = result.get("metadatas") or []
+                embs = result.get("embeddings") or []
+                for i, record_id in enumerate(ids):
+                    records.append(
+                        {
+                            "id": record_id,
+                            "content": docs[i] if i < len(docs) else "",
+                            "metadata": metas[i] if i < len(metas) else {},
+                            "embedding": embs[i] if i < len(embs) else [],
+                        }
+                    )
+                return records
+            except Exception:
+                return list(self._store)
+        return list(self._store)

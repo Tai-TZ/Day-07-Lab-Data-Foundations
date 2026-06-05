@@ -1,6 +1,5 @@
-﻿
 ========================================================================
-PHASE 2 ΓÇö DOCUMENT INVENTORY
+PHASE 2 — DOCUMENT INVENTORY
 ========================================================================
 1. data\customer_support_playbook.txt | 1692 chars | category=support | language=en
 2. data\python_intro.txt | 1944 chars | category=technical | language=en
@@ -10,72 +9,70 @@ PHASE 2 ΓÇö DOCUMENT INVENTORY
 6. data\vi_retrieval_notes.md | 1667 chars | category=technical | language=vi
 
 ========================================================================
-PHASE 2 ΓÇö BASELINE CHUNKING (ChunkingStrategyComparator)
+PHASE 2 — BASELINE CHUNKING (ChunkingStrategyComparator)
 ========================================================================
 
 customer_support_playbook.txt
-  - fixed_size: count=9, avg_length=188.0
-  - by_sentences: count=4, avg_length=418.2
-  - recursive: count=14, avg_length=124.0
+  - fixed_size: count=10, avg_length=187.2
+  - by_sentences: count=4, avg_length=421.0
+  - recursive: count=14, avg_length=119.1
 
 chunking_experiment_report.md
-  - fixed_size: count=10, avg_length=198.7
-  - by_sentences: count=5, avg_length=392.6
-  - recursive: count=18, avg_length=109.2
+  - fixed_size: count=11, avg_length=198.8
+  - by_sentences: count=5, avg_length=395.6
+  - recursive: count=18, avg_length=108.4
 
 vi_retrieval_notes.md
-  - fixed_size: count=9, avg_length=185.2
-  - by_sentences: count=5, avg_length=328.8
-  - recursive: count=13, avg_length=127.2
+  - fixed_size: count=10, avg_length=184.7
+  - by_sentences: count=5, avg_length=331.6
+  - recursive: count=13, avg_length=126.3
 
 ========================================================================
-PHASE 2 ΓÇö SIMILARITY PREDICTIONS
+PHASE 2 — SIMILARITY PREDICTIONS (all-MiniLM-L6-v2)
 ========================================================================
-1. pred=high | actual=-0.0882 (low) | correct=False
+1. pred=high | actual=0.7071 (high) | correct=True
    A: Python is widely used for machine learning and data analysis.
    B: Teams use Python for ML workflows and data science tasks.
-2. pred=high | actual=-0.015 (low) | correct=False
+2. pred=high | actual=0.598 (high) | correct=True
    A: Vector stores retrieve similar embeddings for semantic search.
    B: A vector database ranks chunks by similarity to the query.
-3. pred=low | actual=-0.0134 (low) | correct=True
+3. pred=low | actual=0.1409 (low) | correct=True
    A: Customer support articles should use specific troubleshooting steps.
    B: The billing API deployment requires Kubernetes credentials.
-4. pred=high | actual=-0.0083 (low) | correct=False
+4. pred=high | actual=0.6051 (high) | correct=True
    A: Chunking splits documents into smaller retrieval units.
    B: Recursive chunking tries paragraph boundaries before smaller splits.
-5. pred=low | actual=0.0739 (high) | correct=False
+5. pred=low | actual=-0.0737 (low) | correct=True
    A: Python is a programming language used for automation.
    B: Chocolate cake recipes need flour, eggs, and sugar.
 
 ========================================================================
-PHASE 2 ΓÇö RETRIEVAL BENCHMARK BY STRATEGY
+PHASE 2 — RETRIEVAL BENCHMARK BY STRATEGY (all-MiniLM-L6-v2)
 ========================================================================
 
-fixed_size_300: chunks=49 | relevant_top3=3/5
-  [OK] Q1: What should support articles avoid writing?... | top1=d but omitted the actual instruction. ## Sentence-Based Chunking Sente... | score=-0.499
-  [MISS] Q2: What is the proposed architecture for the RAG system?... | top1=# Vector Store Notes A vector store is a database or storage layer des... | score=-0.394
-  [OK] Q3: Which chunking strategy performed best in the experiment?... | top1=nking is a strong default for mixed technical documentation. Teams sho... | score=-0.561
-  [OK] Q4: Metadata gi├║p retrieval tr├ính nhß║ºm t├ái liß╗çu nh╞░ thß║┐ n├áo?... | top1=ß╗â gß║»n nh├ún t├ái liß╗çu theo ph├▓ng ban, ng├┤n ngß╗», ─æß╗Ö nhß║íy cß║úm, hoß║╖c ng├áy c... | score=0.09
-  [MISS] Q5: What are the four stages of a vector search pipeline?... | top1=# Ghi ch├║ vß╗ü Retrieval cho Trß╗ú l├╜ Tri thß╗⌐c Nß╗Öi bß╗Ö Trong mß╗Öt hß╗ç thß╗æng t... | score=-0.401
+fixed_size_300: chunks=49 | relevant_top3=5/5
+  [OK] Q1: What should support articles avoid writing?... | top1=xed documents should contain clear issue descriptions, step-by-step re... | score=0.506
+  [OK] Q2: What is the proposed architecture for the RAG system?... | top1=# RAG System Design for an Internal Knowledge Assistant ## Background ... | score=0.402
+  [OK] Q3: Which chunking strategy performed best in the experiment?... | top1=e chunking offered the best balance in the experiment. It first tried ... | score=0.719
+  [OK] Q4: Metadata giúp retrieval tránh nhầm tài liệu như thế nào?... | top1=ể gắn nhãn tài liệu theo phòng ban, ngôn ngữ, độ nhạy cảm, hoặc ngày c... | score=0.588
+  [OK] Q5: What are the four stages of a vector search pipeline?... | top1=lustering workflows, and retrieval-augmented generation. ## Typical Wo... | score=0.752
 
-sentence_2: chunks=49 | relevant_top3=2/5
-  [MISS] Q1: What should support articles avoid writing?... | top1=A useful test plan includes comparing chunking strategies, checking wh... | score=-0.375
-  [MISS] Q2: What is the proposed architecture for the RAG system?... | top1=However, some chunks split explanations in awkward places, especially ... | score=-0.169
-  [MISS] Q3: Which chunking strategy performed best in the experiment?... | top1=Khi ng╞░ß╗¥i d├╣ng hß╗Åi vß╗ü t├ái liß╗çu kß╗╣ thuß║¡t bß║▒ng tiß║┐ng Viß╗çt, bß╗Ö lß╗ìc metada... | score=-0.534
-  [OK] Q4: Metadata gi├║p retrieval tr├ính nhß║ºm t├ái liß╗çu nh╞░ thß║┐ n├áo?... | top1=Metadata c┼⌐ng rß║Ñt quan trß╗ìng V├¡ dß╗Ñ, mß╗Öt c├┤ng ty c├│ thß╗â gß║»n nh├ún t├ái li... | score=0.116
-  [OK] Q5: What are the four stages of a vector search pipeline?... | top1=4 **Embed the query** and rank stored vectors by similarity... | score=-0.267
+sentence_2: chunks=49 | relevant_top3=5/5
+  [OK] Q1: What should support articles avoid writing?... | top1=When writing support content, authors should avoid vague statements su... | score=0.51
+  [OK] Q2: What is the proposed architecture for the RAG system?... | top1=# RAG System Design for an Internal Knowledge Assistant ## Background ... | score=0.446
+  [OK] Q3: Which chunking strategy performed best in the experiment?... | top1=The downside was that chunk sizes became less consistent, and some den... | score=0.568
+  [OK] Q4: Metadata giúp retrieval tránh nhầm tài liệu như thế nào?... | top1=Khi người dùng hỏi về tài liệu kỹ thuật bằng tiếng Việt, bộ lọc metada... | score=0.595
+  [OK] Q5: What are the four stages of a vector search pipeline?... | top1=## Typical Workflow A common vector search pipeline has four stages: 1... | score=0.751
 
-recursive_300: chunks=71 | relevant_top3=3/5
-  [MISS] Q1: What should support articles avoid writing?... | top1=Recursive chunking offered the best balance in the experiment. . It fi... | score=-0.478
-  [MISS] Q2: What is the proposed architecture for the RAG system?... | top1=The experiment suggests that there is no universal best strategy, but ... | score=-0.348
-  [OK] Q3: Which chunking strategy performed best in the experiment?... | top1=Example failure cases might include outdated documents outranking curr... | score=-0.382
-  [OK] Q4: Metadata gi├║p retrieval tr├ính nhß║ºm t├ái liß╗çu nh╞░ thß║┐ n├áo?... | top1=Chß║Ñt l╞░ß╗úng chunking ß║únh h╞░ß╗ƒng trß╗▒c tiß║┐p ─æß║┐n chß║Ñt l╞░ß╗úng retrieval. . Nß║┐... | score=0.177
-  [OK] Q5: What are the four stages of a vector search pipeline?... | top1=That is why teams should test retrieval quality with realistic queries... | score=-0.36
+recursive_300: chunks=71 | relevant_top3=5/5
+  [OK] Q1: What should support articles avoid writing?... | top1=When writing support content, authors should avoid vague statements su... | score=0.517
+  [OK] Q2: What is the proposed architecture for the RAG system?... | top1=# RAG System Design for an Internal Knowledge Assistant ## Background... | score=0.6
+  [OK] Q3: Which chunking strategy performed best in the experiment?... | top1=Recursive chunking offered the best balance in the experiment. It firs... | score=0.717
+  [OK] Q4: Metadata giúp retrieval tránh nhầm tài liệu như thế nào?... | top1=Metadata cũng rất quan trọng. Ví dụ, một công ty có thể gắn nhãn tài l... | score=0.608
+  [OK] Q5: What are the four stages of a vector search pipeline?... | top1=## Typical Workflow A common vector search pipeline has four stages:... | score=0.868
 
 ========================================================================
-PHASE 2 ΓÇö SUMMARY
+PHASE 2 — SUMMARY
 ========================================================================
-Best retrieval strategy: fixed_size_300 (3/5)
-My chosen strategy: recursive_300 (3/5)
-
-Exported JSON: report\phase2_results.json
+Best retrieval strategy: fixed_size_300 (5/5)
+My chosen strategy: recursive_300 (5/5)

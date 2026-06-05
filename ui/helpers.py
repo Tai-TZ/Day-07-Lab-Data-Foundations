@@ -9,11 +9,7 @@ from dotenv import load_dotenv
 
 from src.embeddings import (
     EMBEDDING_PROVIDER_ENV,
-    LOCAL_EMBEDDING_MODEL,
-    OPENAI_EMBEDDING_MODEL,
-    LocalEmbedder,
-    OpenAIEmbedder,
-    _mock_embed,
+    create_embedder as _create_embedder,
 )
 from src.models import Document
 
@@ -80,24 +76,8 @@ def load_documents_from_paths(file_paths: list[Path | str]) -> list[Document]:
 
 
 def create_embedder(provider: str):
-    provider = (provider or "mock").strip().lower()
     load_dotenv_config()
-
-    if provider == "local":
-        try:
-            model_name = os.getenv("LOCAL_EMBEDDING_MODEL", LOCAL_EMBEDDING_MODEL)
-            return LocalEmbedder(model_name=model_name)
-        except Exception:
-            return _mock_embed
-
-    if provider == "openai":
-        try:
-            model_name = os.getenv("OPENAI_EMBEDDING_MODEL", OPENAI_EMBEDDING_MODEL)
-            return OpenAIEmbedder(model_name=model_name)
-        except Exception:
-            return _mock_embed
-
-    return _mock_embed
+    return _create_embedder(provider, allow_mock_fallback=True)
 
 
 def get_embedder_backend_name(embedder) -> str:
@@ -106,7 +86,7 @@ def get_embedder_backend_name(embedder) -> str:
 
 def get_default_embedding_provider() -> str:
     load_dotenv_config()
-    return os.getenv(EMBEDDING_PROVIDER_ENV, "mock").strip().lower() or "mock"
+    return os.getenv(EMBEDDING_PROVIDER_ENV, "local").strip().lower() or "local"
 
 
 def create_mock_llm() -> Callable[[str], str]:

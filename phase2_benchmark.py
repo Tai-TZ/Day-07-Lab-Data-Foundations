@@ -15,7 +15,10 @@ from pathlib import Path
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
+import os
 from typing import Any, Callable
+
+from dotenv import load_dotenv
 
 from src import (
     ChunkingStrategyComparator,
@@ -31,6 +34,9 @@ from src import (
 
 ROOT = Path(__file__).parent
 DATA_DIR = ROOT / "data"
+UPLOAD_DIR = DATA_DIR / "uploads"
+
+load_dotenv(dotenv_path=ROOT / ".env", override=False)
 
 DOCUMENT_CATALOG: list[dict[str, Any]] = [
     {
@@ -174,6 +180,22 @@ STRATEGIES: dict[str, Callable[[], Any]] = {
 }
 
 
+def resolve_embedder(name: str):
+    selected = (name or os.getenv("PHASE2_EMBEDDER", "local")).strip().lower()
+    if selected == "mock":
+        return _mock_embed, "mock"
+
+    try:
+        from src.embeddings import LocalEmbedder
+
+        embedder = LocalEmbedder()
+        backend = getattr(embedder, "_backend_name", "all-MiniLM-L6-v2")
+        return embedder, backend
+    except Exception as exc:
+        print(f"[warn] Local embedder unavailable ({exc}); falling back to mock.")
+        return _mock_embed, "mock"
+
+
 def load_source_documents() -> list[Document]:
     documents: list[Document] = []
     for entry in DOCUMENT_CATALOG:
@@ -192,6 +214,26 @@ def load_source_documents() -> list[Document]:
                 },
             )
         )
+
+    if UPLOAD_DIR.exists():
+        for path in sorted(UPLOAD_DIR.glob("*.md")):
+            content = path.read_text(encoding="utf-8")
+            if len(content.strip()) < 200:
+                continue
+            documents.append(
+                Document(
+                    id=path.stem,
+                    content=content,
+                    metadata={
+                        "source": str(path.relative_to(ROOT)),
+                        "category": "upload",
+                        "language": "vi",
+                        "doc_type": "notes",
+                        "audience": "internal",
+                        "uploaded": True,
+                    },
+                )
+            )
     return documents
 
 
@@ -272,9 +314,13 @@ def evaluate_query(
     }
 
 
-def run_strategy_benchmark(strategy_name: str, source_docs: list[Document]) -> dict[str, Any]:
+def run_strategy_benchmark(
+    strategy_name: str,
+    source_docs: list[Document],
+    embedder: Any,
+) -> dict[str, Any]:
     chunker = STRATEGIES[strategy_name]()
-    store = EmbeddingStore(collection_name=f"phase2_{strategy_name}", embedding_fn=_mock_embed)
+    store = EmbeddingStore(collection_name=f"phase2_{strategy_name}", embedding_fn=embedder)
     store.add_documents(chunk_documents(source_docs, chunker))
 
     agent = KnowledgeBaseAgent(store=store, llm_fn=lambda prompt: f"[MOCK LLM] {summarize(prompt, 200)}")
@@ -289,15 +335,17 @@ def run_strategy_benchmark(strategy_name: str, source_docs: list[Document]) -> d
     }
 
 
-def run_similarity_predictions() -> list[dict[str, Any]]:
+def run_similarity_predictions(embedder: Any, embedder_name: str) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
+    high_threshold = 0.45 if embedder_name != "mock" else 0.0
     for pair in SIMILARITY_PAIRS:
-        vec_a = _mock_embed(pair["a"])
-        vec_b = _mock_embed(pair["b"])
+        vec_a = embedder(pair["a"])
+        vec_b = embedder(pair["b"])
         score = round(compute_similarity(vec_a, vec_b), 4)
-        actual = "high" if score >= 0.0 else "low"
+        actual = "high" if score >= high_threshold else "low"
         rows.append(
             {
+                "embedder": embedder_name,
                 "sentence_a": pair["a"],
                 "sentence_b": pair["b"],
                 "prediction": pair["prediction"],
@@ -316,11 +364,92 @@ def print_section(title: str) -> None:
     print("=" * 72)
 
 
+def format_text_report(payload: dict[str, Any]) -> str:
+    """Plain-text report for report/phase2_output.txt (UTF-8)."""
+    lines: list[str] = []
+    embedder = payload["embedder"]
+
+    lines.append("=" * 72)
+    lines.append("PHASE 2 — DOCUMENT INVENTORY")
+    lines.append("=" * 72)
+    for index, doc in enumerate(payload["document_inventory"], start=1):
+        lines.append(
+            f"{index}. {doc['source']} | {doc['chars']} chars | "
+            f"category={doc['category']} | language={doc['language']}"
+        )
+
+    lines.append("")
+    lines.append("=" * 72)
+    lines.append("PHASE 2 — BASELINE CHUNKING (ChunkingStrategyComparator)")
+    lines.append("=" * 72)
+    for filename, strategies in payload["baseline"].items():
+        lines.append(f"\n{filename}")
+        for strategy, stats in strategies.items():
+            lines.append(
+                f"  - {strategy}: count={stats['count']}, avg_length={stats['avg_length']}"
+            )
+
+    lines.append("")
+    lines.append("=" * 72)
+    lines.append(f"PHASE 2 — SIMILARITY PREDICTIONS ({embedder})")
+    lines.append("=" * 72)
+    for index, row in enumerate(payload["similarity_predictions"], start=1):
+        lines.append(
+            f"{index}. pred={row['prediction']} | actual={row['actual_score']} "
+            f"({row['actual_label']}) | correct={row['correct']}"
+        )
+        lines.append(f"   A: {row['sentence_a']}")
+        lines.append(f"   B: {row['sentence_b']}")
+
+    lines.append("")
+    lines.append("=" * 72)
+    lines.append(f"PHASE 2 — RETRIEVAL BENCHMARK BY STRATEGY ({embedder})")
+    lines.append("=" * 72)
+    for strategy_name, result in payload["strategy_results"].items():
+        lines.append(
+            f"\n{strategy_name}: chunks={result['chunk_count']} | "
+            f"relevant_top3={result['relevant_top3']}/5"
+        )
+        for query in result["queries"]:
+            mark = "OK" if query["relevant_in_top3"] else "MISS"
+            lines.append(
+                f"  [{mark}] Q{query['id']}: {query['query'][:60]}... | "
+                f"top1={query['top1_preview'][:70]}... | score={query['top1_score']}"
+            )
+
+    my_strategy = payload["strategy_results"][payload["my_strategy"]]
+    lines.append("")
+    lines.append("=" * 72)
+    lines.append("PHASE 2 — SUMMARY")
+    lines.append("=" * 72)
+    lines.append(
+        f"Best retrieval strategy: {payload['best_strategy']} "
+        f"({payload['strategy_results'][payload['best_strategy']]['relevant_top3']}/5)"
+    )
+    lines.append(
+        f"My chosen strategy: {payload['my_strategy']} ({my_strategy['relevant_top3']}/5)"
+    )
+    return "\n".join(lines) + "\n"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run Phase 2 benchmark for Day 7 lab.")
     parser.add_argument("--export", type=str, default="", help="Optional JSON export path.")
+    parser.add_argument(
+        "--output",
+        type=str,
+        default="",
+        help="Optional UTF-8 text report path (e.g. report/phase2_output.txt).",
+    )
+    parser.add_argument(
+        "--embedder",
+        choices=["local", "mock"],
+        default=os.getenv("PHASE2_EMBEDDER", "local"),
+        help="Embedding backend for retrieval benchmark (default: local MiniLM).",
+    )
     args = parser.parse_args()
 
+    embedder, embedder_name = resolve_embedder(args.embedder)
     source_docs = load_source_documents()
 
     print_section("PHASE 2 — DOCUMENT INVENTORY")
@@ -339,8 +468,8 @@ def main() -> int:
         for strategy, stats in strategies.items():
             print(f"  - {strategy}: count={stats['count']}, avg_length={stats['avg_length']}")
 
-    print_section("PHASE 2 — SIMILARITY PREDICTIONS")
-    similarity_rows = run_similarity_predictions()
+    print_section(f"PHASE 2 — SIMILARITY PREDICTIONS ({embedder_name})")
+    similarity_rows = run_similarity_predictions(embedder, embedder_name)
     for index, row in enumerate(similarity_rows, start=1):
         print(
             f"{index}. pred={row['prediction']} | actual={row['actual_score']} ({row['actual_label']}) | "
@@ -349,10 +478,10 @@ def main() -> int:
         print(f"   A: {row['sentence_a']}")
         print(f"   B: {row['sentence_b']}")
 
-    print_section("PHASE 2 — RETRIEVAL BENCHMARK BY STRATEGY")
+    print_section(f"PHASE 2 — RETRIEVAL BENCHMARK BY STRATEGY ({embedder_name})")
     strategy_results: dict[str, Any] = {}
     for strategy_name in STRATEGIES:
-        result = run_strategy_benchmark(strategy_name, source_docs)
+        result = run_strategy_benchmark(strategy_name, source_docs, embedder)
         strategy_results[strategy_name] = result
         print(
             f"\n{strategy_name}: chunks={result['chunk_count']} | "
@@ -369,6 +498,17 @@ def main() -> int:
     my_strategy = strategy_results["recursive_300"]
 
     payload = {
+        "embedder": embedder_name,
+        "document_count": len(source_docs),
+        "document_inventory": [
+            {
+                "source": doc.metadata["source"],
+                "chars": len(doc.content),
+                "category": doc.metadata["category"],
+                "language": doc.metadata["language"],
+            }
+            for doc in source_docs
+        ],
         "document_catalog": DOCUMENT_CATALOG,
         "baseline": baseline,
         "similarity_predictions": similarity_rows,
@@ -387,6 +527,12 @@ def main() -> int:
         export_path.parent.mkdir(parents=True, exist_ok=True)
         export_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"\nExported JSON: {export_path}")
+
+    if args.output:
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text(format_text_report(payload), encoding="utf-8")
+        print(f"Exported text report: {output_path}")
 
     return 0
 

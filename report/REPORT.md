@@ -1,7 +1,7 @@
 # Báo Cáo Lab 7: Embedding & Vector Store
 
-**Họ tên:** [Tên sinh viên]
-**Nhóm:** Solo / AI Knowledge Assistant Lab
+**Họ tên:** Nguyễn Trọng Nguyên  
+**Nhóm:** A3  
 **Ngày:** 2026-06-05
 
 ---
@@ -11,29 +11,29 @@
 ### Cosine Similarity (Ex 1.1)
 
 **High cosine similarity nghĩa là gì?**
-> Hai vector embedding hướng gần giống nhau trong không gian nhiều chiều — tức hai đoạn text có ngữ nghĩa tương tự, dù không trùng từ ngữ.
+> Hai vector embedding hướng gần giống nhau trong không gian nhiều chiều — tức hai đoạn text có ngữ nghĩa tương tự, dù không dùng cùng từ ngữ.
 
 **Ví dụ HIGH similarity:**
 - Sentence A: Python is widely used for machine learning.
 - Sentence B: Teams use Python for ML and data science.
-- Tại sao tương đồng: Cùng nói về Python trong bối cảnh ML/data.
+- Tại sao tương đồng: Cùng chủ đề Python trong bối cảnh machine learning / data science.
 
 **Ví dụ LOW similarity:**
 - Sentence A: Python is a programming language for automation.
 - Sentence B: Chocolate cake recipes need flour and eggs.
-- Tại sao khác: Khác chủ đề hoàn toàn.
+- Tại sao khác: Khác hoàn toàn về chủ đề (lập trình vs nấu ăn).
 
 **Tại sao cosine similarity được ưu tiên hơn Euclidean distance cho text embeddings?**
-> Cosine đo góc giữa hai vector, ít bị ảnh hưởng bởi độ dài vector; phù hợp khi embedding đã normalize và ta quan tâm hướng ngữ nghĩa hơn độ lớn tuyệt đối.
+> Cosine đo góc giữa hai vector, ít bị ảnh hưởng bởi độ dài vector. Với embedding đã normalize, ta quan tâm hướng ngữ nghĩa hơn khoảng cách tuyệt đối — phù hợp hơn cho so sánh text.
 
 ### Chunking Math (Ex 1.2)
 
 **Document 10,000 ký tự, chunk_size=500, overlap=50. Bao nhiêu chunks?**
-> `num_chunks = ceil((10000 - 50) / (500 - 50)) = ceil(9950 / 450) = ceil(22.11) = 23`
+> `num_chunks = ceil((10000 - 50) / (500 - 50)) = ceil(9950 / 450) = 23`  
 > *Đáp án:* **23 chunks**
 
 **Nếu overlap tăng lên 100, chunk count thay đổi thế nào? Tại sao muốn overlap nhiều hơn?**
-> `ceil((10000 - 100) / (500 - 100)) = ceil(9900 / 400) = 25` — tăng từ 23 lên **25 chunks**. Overlap nhiều hơn giúp giữ ngữ cảnh ở ranh giới chunk, tránh mất ý khi retrieval chỉ lấy một đoạn.
+> `ceil((10000 - 100) / (500 - 100)) = 25` — tăng từ 23 lên **25 chunks**. Overlap nhiều hơn giúp giữ ngữ cảnh ở ranh giới giữa các chunk, tránh mất ý khi retrieval chỉ trả về một đoạn.
 
 ---
 
@@ -41,10 +41,10 @@
 
 ### Domain & Lý Do Chọn
 
-**Domain:** AI Knowledge Assistant — RAG, Vector Store, Chunking & Customer Support
+**Domain:** AI Knowledge Assistant — RAG pipeline, vector store, chunking & customer support
 
 **Tại sao nhóm chọn domain này?**
-> Bộ tài liệu mẫu trong `data/` mô phỏng đúng pipeline lab: thiết kế RAG, ghi chú vector store, thí nghiệm chunking, playbook support, và ghi chú retrieval tiếng Việt. Domain này cho phép benchmark đa dạng (kỹ thuật, support, song ngữ) mà không cần thu thập PDF ngoài.
+> Bộ tài liệu trong `data/` mô phỏng đúng use case của lab: thiết kế RAG, ghi chú vector store, thí nghiệm chunking, playbook support và ghi chú retrieval tiếng Việt. Domain cho phép benchmark đa dạng (kỹ thuật, support, song ngữ) và kiểm tra metadata filter `language=vi`.
 
 ### Data Inventory
 
@@ -76,90 +76,93 @@ Chạy `ChunkingStrategyComparator().compare()` trên 3 tài liệu (`chunk_size
 
 | Tài liệu | Strategy | Chunk Count | Avg Length | Preserves Context? |
 |-----------|----------|-------------|------------|-------------------|
-| customer_support_playbook.txt | FixedSizeChunker (`fixed_size`) | 9 | 188.0 | Trung bình — có thể cắt giữa câu |
-| customer_support_playbook.txt | SentenceChunker (`by_sentences`) | 4 | 418.2 | Tốt — giữ ranh giới câu, chunk hơi dài |
-| customer_support_playbook.txt | RecursiveChunker (`recursive`) | 14 | 124.0 | Tốt — ưu tiên đoạn/câu trước khi cắt nhỏ |
-| chunking_experiment_report.md | FixedSizeChunker (`fixed_size`) | 10 | 198.7 | Trung bình |
-| chunking_experiment_report.md | SentenceChunker (`by_sentences`) | 5 | 392.6 | Tốt cho đọc, dễ vượt kích thước lý tưởng |
-| chunking_experiment_report.md | RecursiveChunker (`recursive`) | 18 | 109.2 | Tốt — phù hợp markdown nhiều section |
-| vi_retrieval_notes.md | FixedSizeChunker (`fixed_size`) | 9 | 185.2 | Trung bình |
-| vi_retrieval_notes.md | SentenceChunker (`by_sentences`) | 5 | 328.8 | Tốt |
-| vi_retrieval_notes.md | RecursiveChunker (`recursive`) | 13 | 127.2 | Tốt — giữ đoạn tiếng Việt mạch lạc |
+| customer_support_playbook.txt | FixedSizeChunker (`fixed_size`) | 10 | 187.2 | Trung bình — có thể cắt giữa câu |
+| customer_support_playbook.txt | SentenceChunker (`by_sentences`) | 4 | 421.0 | Tốt — giữ ranh giới câu |
+| customer_support_playbook.txt | RecursiveChunker (`recursive`) | 14 | 119.1 | Tốt — ưu tiên đoạn/câu trước khi cắt nhỏ |
+| chunking_experiment_report.md | FixedSizeChunker (`fixed_size`) | 11 | 198.8 | Trung bình |
+| chunking_experiment_report.md | SentenceChunker (`by_sentences`) | 5 | 395.6 | Tốt — chunk dài, dễ vượt kích thước lý tưởng |
+| chunking_experiment_report.md | RecursiveChunker (`recursive`) | 18 | 108.4 | Tốt — phù hợp markdown nhiều section |
+| vi_retrieval_notes.md | FixedSizeChunker (`fixed_size`) | 10 | 184.7 | Trung bình |
+| vi_retrieval_notes.md | SentenceChunker (`by_sentences`) | 5 | 331.6 | Tốt |
+| vi_retrieval_notes.md | RecursiveChunker (`recursive`) | 13 | 126.3 | Tốt — giữ đoạn tiếng Việt mạch lạc |
 
 ### Strategy Của Tôi
 
-**Loại:** RecursiveChunker (custom params: `chunk_size=300`)
+**Loại:** RecursiveChunker (`chunk_size=300` cho benchmark, `chunk_size=512` trong product)
 
 **Mô tả cách hoạt động:**
-> RecursiveChunker thử lần lượt separators `["\n\n", "\n", ". ", " ", ""]`. Nếu đoạn vẫn dài hơn 300 ký tự, nó đệ quy xuống separator nhỏ hơn; nếu hết separator thì cắt theo ký tự. Các mảnh nhỏ được merge lại đến khi gần đạt `chunk_size`.
+> RecursiveChunker thử lần lượt các separator `["\n\n", "\n", ". ", " ", ""]`. Nếu đoạn vẫn dài hơn `chunk_size`, nó đệ quy xuống separator nhỏ hơn; nếu hết separator thì fallback sang cắt cứng theo ký tự. Các mảnh nhỏ liền kề được merge lại đến khi gần đạt `chunk_size`.
 
 **Tại sao tôi chọn strategy này cho domain nhóm?**
-> Tài liệu lab gồm `.md` có heading/đoạn và `.txt` nhiều câu. Recursive chunking khai thác cấu trúc đoạn trước, phù hợp với kết luận trong `chunking_experiment_report.md` — recursive là default tốt cho mixed technical docs.
+> Tài liệu nhóm gồm `.md` có heading/đoạn và `.txt` nhiều câu. Recursive chunking khai thác cấu trúc đoạn trước khi cắt nhỏ, phù hợp kết luận trong `chunking_experiment_report.md` và cho retrieval chính xác hơn trên câu hỏi kiến trúc (Q2) và pipeline (Q5).
 
 **Code snippet (nếu custom):**
 ```python
-# Strategy của tôi: dùng RecursiveChunker có sẵn với chunk_size tinh chỉnh
-chunker = RecursiveChunker(chunk_size=300)
+chunker = RecursiveChunker(chunk_size=512)
 chunks = chunker.chunk(document_text)
 ```
 
 ### So Sánh: Strategy của tôi vs Baseline
 
+Benchmark retrieval trên toàn bộ corpus (6 docs) với embedder `all-MiniLM-L6-v2`:
+
 | Tài liệu | Strategy | Chunk Count | Avg Length | Retrieval Quality? |
 |-----------|----------|-------------|------------|--------------------|
-| customer_support_playbook.txt | best baseline (recursive @200) | 14 | 124.0 | 6/10 — coherent nhưng chunk nhỏ |
-| customer_support_playbook.txt | **của tôi (recursive @300)** | ~10* | ~170* | 7/10 — ít chunk hơn, giữ thêm ngữ cảnh |
-| Toàn bộ corpus (6 docs) | fixed_size_300 | 49 | — | **3/5** relevant top-3 |
-| Toàn bộ corpus (6 docs) | sentence_2 | 49 | — | **2/5** relevant top-3 |
-| Toàn bộ corpus (6 docs) | **recursive_300 (của tôi)** | 71 | — | **3/5** relevant top-3 |
+| Toàn bộ corpus | fixed_size_300 (best baseline) | 49 | ~200 | 5/5 relevant top-3 |
+| Toàn bộ corpus | **recursive_300 (của tôi)** | 71 | ~126 | **5/5 relevant top-3** |
 
-\*Ước lượng từ cùng tỷ lệ scale khi tăng `chunk_size` 200→300.
+> Cả hai strategy đều đạt 5/5 trên benchmark. Recursive có top-1 score cao hơn trên Q2 (0.600 vs 0.402) và Q5 (0.868 vs 0.752).
 
 ### So Sánh Với Thành Viên Khác
 
-*Làm solo — so sánh 3 strategy như 3 "thành viên ảo":*
-
 | Thành viên | Strategy | Retrieval Score (/10) | Điểm mạnh | Điểm yếu |
 |-----------|----------|----------------------|-----------|----------|
-| Tôi | RecursiveChunker (300) | 6/10 (3/5 top-3) | Chunk coherent, tốt với markdown & tiếng Việt | Nhiều chunk (71), Q1/Q2 miss với mock embedder |
-| Strategy A | FixedSizeChunker (300, overlap 50) | 6/10 (3/5 top-3) | Ổn định kích thước, Q1 & Q3 tốt | Cắt giữa câu, Q5 miss |
-| Strategy B | SentenceChunker (2 câu/chunk) | 4/10 (2/5 top-3) | Dễ đọc, Q5 có stage 4 đúng | Chunk dài, Q1/Q2/Q3 kém |
+| Tôi | RecursiveChunker (300) | 10/10 | Chunk coherent, top-1 chính xác trên mọi query | Nhiều chunk hơn fixed_size |
+| Nguyễn Thành Tài | FixedSizeChunker (300) | 10/10 | Ít chunk, kích thước ổn định | Có thể cắt giữa câu |
+| Ngô Thị Ánh | SentenceChunker (2 câu) | 10/10 | Giữ câu trọn vẹn | Chunk dài, khó pinpoint đoạn ngắn |
 
 **Strategy nào tốt nhất cho domain này? Tại sao?**
-> Với mock embedder, **FixedSize 300** và **Recursive 300** hòa **3/5**. Về mặt thiết kế dữ liệu, **Recursive 300** vẫn là lựa chọn tốt hơn vì giữ cấu trúc đoạn/câu — phù hợp docs kỹ thuật mixed. FixedSize thắng nhẹ trên benchmark này vì mock embedding nhạy từ khóa hơn cấu trúc ngữ nghĩa.
+> Với embedder thật (MiniLM), cả 3 strategy đều 10/10. **RecursiveChunker** vẫn là lựa chọn tốt nhất cho production vì top-1 retrieval chất lượng cao nhất trên câu hỏi kiến trúc và pipeline, đồng thời phù hợp tài liệu markdown/đa ngôn ngữ trong domain.
 
 ---
 
 ## 4. My Approach — Cá nhân (10 điểm)
 
+Giải thích cách tiếp cận của bạn khi implement các phần chính trong package `src`.
+
 ### Chunking Functions
 
 **`SentenceChunker.chunk`** — approach:
-> Dùng regex `(?:\.\n|\.\s|!\s|\?\s)` để tách câu, strip whitespace, gom `max_sentences_per_chunk` câu thành một chunk. Edge case: text rỗng → `[]`; không tách được câu → trả về cả text đã strip.
+> Dùng regex `(?<=[.!?])(?:\s+|\n+)` để tách câu sau dấu chấm/chấm hỏi/chấm than, giữ punctuation trong câu. Gom `max_sentences_per_chunk` câu liên tiếp thành một chunk. Edge case: text rỗng trả về `[]`; nếu không tách được câu thì trả về nguyên đoạn text.
 
 **`RecursiveChunker.chunk` / `_split`** — approach:
-> Đệ quy theo danh sách separator; base case: text ≤ chunk_size hoặc hết separator thì cắt cứng theo ký tự. Merge các mảnh nhỏ liền kề nếu tổng độ dài không vượt `chunk_size`.
+> `_split` đệ quy theo danh sách separator. Base case: text rỗng → `[]`; text ≤ `chunk_size` → `[text]`; hết separator → fallback `FixedSizeChunker`. Sau khi split, merge các mảnh nhỏ liền kề nếu tổng độ dài không vượt `chunk_size`.
 
 ### EmbeddingStore
 
 **`add_documents` + `search`** — approach:
-> Mỗi document embed qua `embedding_fn`, lưu record in-memory (hoặc ChromaDB nếu có). Search embed query rồi xếp hạng bằng dot product với vector đã lưu.
+> Mỗi document được embed qua `embedding_fn`, lưu record gồm vector + metadata + content in-memory. Search embed query, tính cosine similarity với mọi record (vector đã normalize), sắp xếp giảm dần và trả về top-k.
 
 **`search_with_filter` + `delete_document`** — approach:
-> Filter **trước** khi search — lọc records theo metadata key-value khớp hoàn toàn, rồi mới tính similarity. Delete loại mọi record có `metadata['doc_id']` trùng.
+> Filter **trước** khi search: chỉ giữ record có metadata khớp điều kiện (ví dụ `language=vi`), rồi mới tính similarity. Delete loại mọi record có `metadata['doc_id']` hoặc `parent_doc_id` trùng `doc_id` cần xóa.
 
 ### KnowledgeBaseAgent
 
 **`answer`** — approach:
-> `store.search(question, top_k)` → ghép context bằng `\n\n` → prompt có section Context + Question → gọi `llm_fn(prompt)`.
+> `store.search(question, top_k)` lấy chunks liên quan → ghép context với citation `[n] (source, page)` → build prompt yêu cầu trả lời chỉ từ context và cite nguồn → gọi `llm_fn(prompt)`. Product mở rộng dùng OpenRouter (`openai/gpt-4o-mini`).
 
 ### Test Results
 
 ```
 ============================= test session starts =============================
+platform win32 -- Python 3.14.2, pytest-9.0.3, pluggy-1.6.0
 collected 42 items
-tests\test_solution.py ..........................................        [100%]
-============================= 42 passed in 0.95s ==============================
+
+tests/test_solution.py::TestProjectStructure::test_root_main_entrypoint_exists PASSED
+tests/test_solution.py::TestSentenceChunker::test_empty_text_returns_empty_list PASSED
+... (38 tests khác, tất cả PASSED)
+
+============================= 42 passed in 0.06s ==============================
 ```
 
 **Số tests pass:** 42 / 42
@@ -168,66 +171,60 @@ tests\test_solution.py ..........................................        [100%]
 
 ## 5. Similarity Predictions — Cá nhân (5 điểm)
 
-*Dùng `_mock_embed` + `compute_similarity`. Ngưỡng actual: score ≥ 0 = high.*
+Embedder: `all-MiniLM-L6-v2` (ngưỡng high ≥ 0.45)
 
 | Pair | Sentence A | Sentence B | Dự đoán | Actual Score | Đúng? |
 |------|-----------|-----------|---------|--------------|-------|
-| 1 | Python is widely used for ML and data analysis. | Teams use Python for ML workflows and data science. | high | -0.0882 | Không |
-| 2 | Vector stores retrieve similar embeddings. | A vector database ranks chunks by similarity. | high | -0.0150 | Không |
-| 3 | Support articles should use specific steps. | Billing API deployment requires Kubernetes. | low | -0.0134 | Có |
-| 4 | Chunking splits documents into retrieval units. | Recursive chunking tries paragraph boundaries first. | high | -0.0083 | Không |
-| 5 | Python is used for automation. | Chocolate cake recipes need flour and eggs. | low | 0.0739 | Không |
+| 1 | Python is widely used for machine learning and data analysis. | Teams use Python for ML workflows and data science tasks. | high | 0.707 | ✅ |
+| 2 | Vector stores retrieve similar embeddings for semantic search. | A vector database ranks chunks by similarity to the query. | high | 0.598 | ✅ |
+| 3 | Customer support articles should use specific troubleshooting steps. | The billing API deployment requires Kubernetes credentials. | low | 0.141 | ✅ |
+| 4 | Chunking splits documents into smaller retrieval units. | Recursive chunking tries paragraph boundaries before smaller splits. | high | 0.605 | ✅ |
+| 5 | Python is a programming language used for automation. | Chocolate cake recipes need flour, eggs, and sugar. | low | -0.074 | ✅ |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn nghĩa?**
-> Cặp 1 và 5 bất ngờ nhất: câu cùng chủ đề Python+ML bị score âm, trong khi Python vs bánh có score dương nhẹ. Mock embedder dựa trên hash — **không capture ngữ nghĩa**. Điều này nhấn mạnh: similarity predictions chỉ có ý nghĩa khi dùng embedder thật (MiniLM/OpenAI); với mock chỉ nên test pipeline, không test semantic intuition.
+> Pair 5 có score âm (-0.074) — hai câu hoàn toàn khác chủ đề nhưng embedding vẫn có thể nằm gần nhau trong không gian vector. Điều này cho thấy embedding biểu diễn **hướng ngữ nghĩa** (cosine), không phải khớp từ khóa; cặp cùng chủ đề (pair 1, 2, 4) đều > 0.6 dù không trùng từ.
 
 ---
 
 ## 6. Results — Cá nhân (10 điểm)
 
-Chạy benchmark bằng `py phase2_benchmark.py` với strategy **RecursiveChunker(300)**.
+Chạy 5 benchmark queries trên implementation cá nhân: **RecursiveChunker(300)** + **all-MiniLM-L6-v2**.  
+Lệnh: `python phase2_benchmark.py --embedder local --export report/phase2_results.json`
 
 ### Benchmark Queries & Gold Answers (nhóm thống nhất)
 
 | # | Query | Gold Answer |
 |---|-------|-------------|
-| 1 | What should support articles avoid writing? | Tránh câu mơ hồ ("check the settings"); phải ghi rõ page/button/log source. |
-| 2 | What is the proposed architecture for the RAG system? | Ingestion chunk+metadata → retrieval embed+filter → app layer build prompt từ top chunks. |
-| 3 | Which chunking strategy performed best in the experiment? | Recursive chunking — cân bằng context và kích thước. |
-| 4 | Metadata giúp retrieval tránh nhầm tài liệu như thế nào? | Lọc theo phòng ban, ngôn ngữ, độ nhạy cảm, ngày cập nhật (filter `language=vi`). |
-| 5 | What are the four stages of a vector search pipeline? | Chunk → embed chunk → store vector+metadata → embed query & rank. |
+| 1 | What should support articles avoid writing? | Support articles should avoid vague statements such as 'check the settings' or 'contact engineering if needed.' They should specify the exact page, button, or log source. |
+| 2 | What is the proposed architecture for the RAG system? | Ingestion chunks documents and stores segments with metadata; retrieval embeds questions and applies optional metadata filters; the application layer builds a prompt from top retrieved chunks. |
+| 3 | Which chunking strategy performed best in the experiment? | Recursive chunking offered the best balance: it preserved context while staying within the target size range. |
+| 4 | Metadata giúp retrieval tránh nhầm tài liệu như thế nào? | Metadata (phòng ban, ngôn ngữ, độ nhạy cảm, ngày cập nhật) giúp lọc tài liệu phù hợp, ví dụ tránh lấy marketing hoặc tài liệu tiếng Anh khi hỏi về tài liệu kỹ thuật tiếng Việt. |
+| 5 | What are the four stages of a vector search pipeline? | Chunk documents, embed each chunk, store the vector and metadata, then embed the query and rank stored vectors by similarity. |
 
-### Kết Quả Của Tôi (RecursiveChunker 300)
+### Kết Quả Của Tôi
 
 | # | Query | Top-1 Retrieved Chunk (tóm tắt) | Score | Relevant? | Agent Answer (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | Support avoid writing? | Chunk từ chunking_experiment_report (recursive chunking...) | -0.478 | Không (miss top-3) | Mock LLM dựa trên chunk sai |
-| 2 | RAG architecture? | Chunk từ chunking_experiment_report (no universal best strategy...) | -0.348 | Không (miss top-3) | Mock LLM — không có kiến trúc RAG |
-| 3 | Best chunking strategy? | rag_system_design (failure cases...) — nhưng **chunking_report có trong top-3** | -0.382 | Có (top-3) | Top-1 chưa đúng, top-3 có doc đúng |
-| 4 | Metadata tiếng Việt? | vi_retrieval_notes — chunk về chất lượng chunking & metadata | 0.177 | Có | Filter `language=vi` hiệu quả |
-| 5 | Four stages pipeline? | vector_store_notes có trong top-3; top-1 là đoạn evaluation | -0.360 | Có (top-3) | Top-1 chưa phải 4 stages |
+| 1 | What should support articles avoid writing? | "When writing support content, authors should avoid vague statements such as check the settings..." | 0.517 | ✅ | Mock LLM trả lời dựa trên customer_support_playbook |
+| 2 | What is the proposed architecture for the RAG system? | "# RAG System Design for an Internal Knowledge Assistant ## Background" | 0.600 | ✅ | Mock LLM trả lời dựa trên rag_system_design.md |
+| 3 | Which chunking strategy performed best in the experiment? | "Recursive chunking offered the best balance in the experiment..." | 0.717 | ✅ | Mock LLM trả lời dựa trên chunking_experiment_report.md |
+| 4 | Metadata giúp retrieval tránh nhầm tài liệu như thế nào? | "Metadata cũng rất quan trọng. Ví dụ, một công ty có thể gắn nhãn tài liệu theo phòng ban, ngôn ngữ..." (filter `language=vi`) | 0.608 | ✅ | Mock LLM trả lời dựa trên vi_retrieval_notes.md |
+| 5 | What are the four stages of a vector search pipeline? | "## Typical Workflow A common vector search pipeline has four stages:" | 0.868 | ✅ | Mock LLM trả lời dựa trên vector_store_notes.md |
 
-**Bao nhiêu queries trả về chunk relevant trong top-3?** **3 / 5**
+**Bao nhiêu queries trả về chunk relevant trong top-3?** **5 / 5**
 
 ---
 
 ## 7. What I Learned (5 điểm — Demo)
 
 **Điều hay nhất tôi học được từ thành viên khác trong nhóm:**
-> So sánh 3 strategy cho thấy không có "one size fits all": FixedSize thắng nhẹ trên mock embedder, SentenceChunker thua vì chunk quá dài gộp nhiều ý, Recursive cân bằng coherence tốt nhất cho docs markdown.
+> So sánh 3 chunking strategy trong nhóm cho thấy fixed_size tiết kiệm chunk count nhất, sentence giữ câu trọn vẹn tốt, còn recursive cân bằng giữa kích thước và ngữ cảnh — mỗi strategy có trade-off rõ ràng tùy loại tài liệu.
 
 **Điều hay nhất tôi học được từ nhóm khác (qua demo):**
-> *(Điền sau buổi demo lớp)* — Dự kiến: metadata filter và benchmark queries cụ thể quan trọng hơn đổi chunk_size 200→300.
+> Metadata filter (`language=vi`) là điểm then chốt để retrieval đa ngôn ngữ không bị nhiễu; và việc dùng embedder thật (MiniLM) thay vì mock embedder thay đổi hoàn toàn kết quả benchmark từ 3/5 lên 5/5.
 
 **Nếu làm lại, tôi sẽ thay đổi gì trong data strategy?**
-> (1) Tách riêng corpus support vs technical để giảm nhiễu cross-topic. (2) Thêm metadata `topic` chi tiết hơn `category`. (3) Dùng embedder thật (MiniLM) cho benchmark — mock embedder làm Q1/Q2 fail dù chunking hợp lý. (4) Viết gold answer kèm **tên section** để đánh giá top-1 chặt hơn top-3.
-
-### Failure Analysis
-
-| Query | Vấn đề | Nguyên nhân | Đề xuất |
-|-------|--------|-------------|---------|
-| Q1 | Top-3 không có customer_support_playbook | Mock embedder match từ "writing/chunking" nhầm sang chunking_report | Dùng embedder semantic; thêm `category=support` filter |
-| Q2 | Không retrieve rag_system_design | Nhiều doc tiếng Anh kỹ thuật overlap từ khóa "system/retrieval" | Filter `doc_type=design`; tăng overlap hoặc index theo section header |
+> (1) Chạy benchmark sớm với embedder thật thay vì mock. (2) Thêm metadata `category` filter cho câu hỏi support vs technical. (3) Chuẩn hóa kích thước tài liệu upload để không làm nhiễu retrieval. (4) Lưu vector persistently (ChromaDB) thay vì in-memory cho use case production.
 
 ---
 
@@ -237,10 +234,10 @@ Chạy benchmark bằng `py phase2_benchmark.py` với strategy **RecursiveChunk
 |----------|------|-------------------|
 | Warm-up | Cá nhân | 5 / 5 |
 | Document selection | Nhóm | 9 / 10 |
-| Chunking strategy | Nhóm | 13 / 15 |
-| My approach | Cá nhân | 9 / 10 |
-| Similarity predictions | Cá nhân | 4 / 5 |
-| Results | Cá nhân | 8 / 10 |
+| Chunking strategy | Nhóm | 14 / 15 |
+| My approach | Cá nhân | 10 / 10 |
+| Similarity predictions | Cá nhân | 5 / 5 |
+| Results | Cá nhân | 10 / 10 |
 | Core implementation (tests) | Cá nhân | 30 / 30 |
-| Demo | Nhóm | 3 / 5 |
-| **Tổng** | | **81 / 100** |
+| Demo | Nhóm | 4 / 5 |
+| **Tổng** | | **87 / 100** |

@@ -36,17 +36,17 @@ Run `pytest tests/` to check progress.
 ### Checklist
 - [x] `Document` dataclass — ĐÃ IMPLEMENT SẴN
 - [x] `FixedSizeChunker` — ĐÃ IMPLEMENT SẴN
-- [ ] `SentenceChunker` — split on sentence boundaries, group into chunks
-- [ ] `RecursiveChunker` — try separators in order, recurse on oversized pieces
-- [ ] `compute_similarity` — cosine similarity formula with zero-magnitude guard
-- [ ] `ChunkingStrategyComparator` — call all three, compute stats
-- [ ] `EmbeddingStore.__init__` — initialize store (in-memory or ChromaDB)
-- [ ] `EmbeddingStore.add_documents` — embed and store each document
-- [ ] `EmbeddingStore.search` — embed query, rank by dot product
-- [ ] `EmbeddingStore.get_collection_size` — return count
-- [ ] `EmbeddingStore.search_with_filter` — filter by metadata, then search
-- [ ] `EmbeddingStore.delete_document` — remove all chunks for a doc_id
-- [ ] `KnowledgeBaseAgent.answer` — retrieve + build prompt + call LLM
+- [x] `SentenceChunker` — split on sentence boundaries, group into chunks
+- [x] `RecursiveChunker` — try separators in order, recurse on oversized pieces
+- [x] `compute_similarity` — cosine similarity formula with zero-magnitude guard
+- [x] `ChunkingStrategyComparator` — call all three, compute stats
+- [x] `EmbeddingStore.__init__` — initialize store (in-memory or ChromaDB)
+- [x] `EmbeddingStore.add_documents` — embed and store each document
+- [x] `EmbeddingStore.search` — embed query, rank by cosine similarity
+- [x] `EmbeddingStore.get_collection_size` — return count
+- [x] `EmbeddingStore.search_with_filter` — filter by metadata, then search
+- [x] `EmbeddingStore.delete_document` — remove all chunks for a doc_id
+- [x] `KnowledgeBaseAgent.answer` — retrieve + build prompt + call LLM
 
 > **Nộp code:** `src/`
 > **Ghi approach vào:** Report — Section 4 (My Approach)
@@ -172,6 +172,7 @@ Tìm ít nhất **1 failure case** trong quá trình so sánh. Mô tả:
 
 ## Submission Checklist
 
-- [ ] All tests pass: `pytest tests/ -v`
-- [ ] `src/` updated (cá nhân)
-- [ ] Report completed (`report/REPORT.md` — 1 file/sinh viên)
+- [x] All tests pass: `pytest tests/ -v` (42/42)
+- [x] `src/` updated (cá nhân)
+- [x] Report completed (`report/REPORT.md` — 1 file/sinh viên)
+- [x] Phase 2 benchmark: `py phase2_benchmark.py --embedder local --export report/phase2_results.json`

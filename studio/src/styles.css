@@ -10,7 +10,6 @@
   --radius-lg: 16px;
   --radius-xl: 22px;
   --radius-2xl: 30px;
-  --radius-pill: 32px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -33,13 +32,11 @@
   --color-ring: var(--ring);
 
   --color-surface: var(--surface);
-  --color-surface-elevated: var(--surface-elevated);
   --color-hairline: var(--hairline);
-  --color-deep-green: var(--deep-green);
-  --color-pale-green: var(--pale-green);
-  --color-coral: var(--coral);
-  --color-action-blue: var(--action-blue);
+  --color-indexing: var(--indexing);
+  --color-retrieval: var(--retrieval);
   --color-mint: var(--mint);
+  --color-coral: var(--coral);
 
   --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui;
   --font-sans: "Inter", ui-sans-serif, system-ui;
@@ -47,43 +44,42 @@
 }
 
 :root {
-  /* Dark "Tech Vibe" — Cohere-inspired dark mode */
-  --background: oklch(0.16 0.01 240);
+  /* RAG Studio — dark mode "under the hood" */
+  --background: oklch(0.15 0.012 250);
   --foreground: oklch(0.97 0.005 240);
-  --card: oklch(0.20 0.012 240);
+  --card: oklch(0.19 0.014 250);
   --card-foreground: oklch(0.97 0.005 240);
-  --popover: oklch(0.20 0.012 240);
+  --popover: oklch(0.19 0.014 250);
   --popover-foreground: oklch(0.97 0.005 240);
   --primary: oklch(0.97 0.005 240);
-  --primary-foreground: oklch(0.16 0.01 240);
-  --secondary: oklch(0.24 0.012 240);
+  --primary-foreground: oklch(0.15 0.012 250);
+  --secondary: oklch(0.23 0.014 250);
   --secondary-foreground: oklch(0.97 0.005 240);
-  --muted: oklch(0.24 0.012 240);
-  --muted-foreground: oklch(0.65 0.015 240);
-  --accent: oklch(0.28 0.014 240);
+  --muted: oklch(0.23 0.014 250);
+  --muted-foreground: oklch(0.66 0.015 250);
+  --accent: oklch(0.27 0.016 250);
   --accent-foreground: oklch(0.97 0.005 240);
   --destructive: oklch(0.6 0.2 27);
   --destructive-foreground: oklch(0.97 0.005 240);
-  --border: oklch(0.28 0.012 240);
-  --input: oklch(0.28 0.012 240);
+  --border: oklch(0.27 0.014 250);
+  --input: oklch(0.27 0.014 250);
   --ring: oklch(0.75 0.18 165);
 
-  --surface: oklch(0.20 0.012 240);
-  --surface-elevated: oklch(0.24 0.014 240);
-  --hairline: oklch(0.30 0.012 240);
+  --surface: oklch(0.21 0.014 250);
+  --hairline: oklch(0.30 0.014 250);
 
-  --deep-green: oklch(0.32 0.06 165);
-  --pale-green: oklch(0.85 0.12 150);
+  /* Accent palette — orange for Indexing, purple for Retrieval */
+  --indexing: oklch(0.74 0.17 50);
+  --retrieval: oklch(0.68 0.18 295);
   --mint: oklch(0.82 0.18 165);
   --coral: oklch(0.74 0.17 35);
-  --action-blue: oklch(0.70 0.16 245);
 
   --radius: 0.625rem;
-  --chart-1: var(--mint);
-  --chart-2: var(--action-blue);
-  --chart-3: var(--coral);
-  --chart-4: var(--pale-green);
-  --chart-5: oklch(0.75 0.15 300);
+  --chart-1: var(--indexing);
+  --chart-2: var(--retrieval);
+  --chart-3: var(--mint);
+  --chart-4: var(--coral);
+  --chart-5: oklch(0.75 0.15 220);
 
   --sidebar: var(--card);
   --sidebar-foreground: var(--foreground);
@@ -96,17 +92,13 @@
 }
 
 @layer base {
-  * {
-    border-color: var(--color-border);
-  }
-
+  * { border-color: var(--color-border); }
   html, body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
-
   ::selection {
     background: color-mix(in oklab, var(--mint) 35%, transparent);
     color: var(--foreground);
@@ -115,17 +107,17 @@
 
 @utility mono-label {
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted-foreground);
 }
 
 @utility hairline-grid {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--hairline) 60%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--hairline) 60%, transparent) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(to right, color-mix(in oklab, var(--hairline) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--hairline) 55%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
 @utility pulse-dot {
@@ -137,30 +129,75 @@
   50% { box-shadow: 0 0 0 8px color-mix(in oklab, var(--mint) 0%, transparent); }
 }
 
+@keyframes node-pulse {
+  0%, 100% { filter: drop-shadow(0 0 0px transparent); }
+  50% { filter: drop-shadow(0 0 12px var(--glow, var(--mint))); }
+}
+
+@utility node-pulse {
+  animation: node-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes dash-flow {
+  to { stroke-dashoffset: -24; }
+}
+
+@utility dash-flow {
+  stroke-dasharray: 4 6;
+  animation: dash-flow 0.6s linear infinite;
+}
+
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
 @utility shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in oklab, var(--mint) 20%, transparent) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, color-mix(in oklab, var(--mint) 22%, transparent) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 2s linear infinite;
-}
-
-@keyframes vector-flow {
-  0% { transform: translateY(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(-100%); opacity: 0; }
 }
 
 @keyframes caret-blink {
   0%, 50% { opacity: 1; }
   51%, 100% { opacity: 0; }
+}
+
+@keyframes particle-travel {
+  0% { offset-distance: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* Sidebar / panel scroll — thin, dark, visible on hover */
+.studio-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  scrollbar-gutter: stable;
+}
+
+.studio-scrollbar:hover {
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 40%, transparent) transparent;
+}
+
+.studio-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.studio-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.studio-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+}
+
+.studio-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--muted-foreground) 38%, transparent);
+}
+
+.studio-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
 }

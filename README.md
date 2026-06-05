@@ -124,14 +124,16 @@ PY
 ├── README.md              ← Bạn đang đọc file này
 ├── exercises.md           ← Bài tập (4 phần)
 ├── main.py               ← Entry point cho manual demo
-├── rag_api.py            ← Backend API cho RAG Visualizer (web UI)
-├── src/
+├── rag_api.py            ← Backend API cho RAG Workflow Studio
+├── app.py                ← Streamlit UI (tùy chọn, từ nhánh dev)
+├── src/                  ← Python lab package
 │   ├── chunking.py       ← Chunking classes + similarity helper
 │   ├── store.py          ← EmbeddingStore
 │   ├── agent.py          ← KnowledgeBaseAgent
-│   └── ...               ← Các module nhỏ hơn
-├── web/                   ← Giao diện RAG Visualizer (React + Vite)
-├── data/                  ← Tài liệu mẫu + tài liệu nhóm (.txt/.md)
+│   └── ...
+├── studio/               ← RAG Workflow Studio UI ([rag-reveal](https://github.com/NguyenTrongNguyen04/rag-reveal))
+├── ui/                   ← Helpers cho Streamlit
+├── data/                 ← Tài liệu mẫu + upload (.md/.txt)
 ├── tests/
 │   └── test_solution.py   ← Test suite (30+ tests)
 ├── report/
@@ -145,20 +147,30 @@ PY
 
 ---
 
-## RAG Visualizer (Web UI)
+## RAG Workflow Studio (UI)
 
-Repo có kèm giao diện web trực quan hóa pipeline RAG trong thư mục `web/`.
+Toàn bộ dự án nằm trong **một folder** `Day-07-Lab-Data-Foundations/`. Giao diện whiteboard pipeline nằm trong `studio/`, kết nối backend `rag_api.py` với **embedding thật** `all-MiniLM-L6-v2` (384-dim, cosine similarity).
 
 ```bash
-# Terminal 1 — backend
+# Terminal 1 — backend (thư mục gốc lab)
 pip install -r requirements.txt
+copy .env.example .env
 python -m uvicorn rag_api:app --reload --port 8000
 
 # Terminal 2 — frontend
-cd web && npm install && npm run dev
+cd studio
+npm install
+copy .env.example .env
+npm run dev
 ```
 
-Chi tiết: `README_RAG_REVEAL.md` hoặc `web/README.md`.
+Mở URL do Vite in ra (thường `http://localhost:8080`). Upload file `.md` trực tiếp trên UI (lưu vào `data/uploads/`).
+
+**Lần chạy đầu:** backend tải model MiniLM (~80MB). UI sẽ chờ `/health` báo `ok: true` (có thể 30–90 giây). Nếu `sentence-transformers` lỗi trên Python 3.14, backend tự fallback sang `fastembed` ONNX.
+
+**Tùy chọn OpenAI chat:** đặt `OPENAI_API_KEY` trong `.env` để dùng LLM thật thay vì trích xuất grounded.
+
+**Streamlit UI (tùy chọn):** `streamlit run app.py`
 
 ---
 

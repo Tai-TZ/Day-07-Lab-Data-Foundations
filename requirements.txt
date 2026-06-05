@@ -3,17 +3,12 @@ python-dotenv>=1.0
 fastapi>=0.111
 uvicorn>=0.30
 python-multipart>=0.0.9
+pypdf>=4.0
 streamlit>=1.28
 
-# Optional manual-demo extras
-# Install local embedder support with:
-#   pip install sentence-transformers
-# Install OpenAI embedder support with:
-#   pip install openai
-# Install both optional embedders with:
-#   pip install openai sentence-transformers
-# sentence-transformers>=3.0
-# openai>=1.0
+sentence-transformers>=3.0
+fastembed>=0.4.0
+openai>=1.0
 
 # Optional: for bonus tasks
 # chromadb>=0.4.0      # Real vector database integration
