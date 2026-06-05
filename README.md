@@ -124,11 +124,13 @@ PY
 ├── README.md              ← Bạn đang đọc file này
 ├── exercises.md           ← Bài tập (4 phần)
 ├── main.py               ← Entry point cho manual demo
+├── rag_api.py            ← Backend API cho RAG Visualizer (web UI)
 ├── src/
 │   ├── chunking.py       ← Chunking classes + similarity helper
 │   ├── store.py          ← EmbeddingStore
 │   ├── agent.py          ← KnowledgeBaseAgent
 │   └── ...               ← Các module nhỏ hơn
+├── web/                   ← Giao diện RAG Visualizer (React + Vite)
 ├── data/                  ← Tài liệu mẫu + tài liệu nhóm (.txt/.md)
 ├── tests/
 │   └── test_solution.py   ← Test suite (30+ tests)
@@ -140,6 +142,23 @@ PY
 │   └── SCORING.md        ← Tiêu chí chấm điểm
 └── requirements.txt
 ```
+
+---
+
+## RAG Visualizer (Web UI)
+
+Repo có kèm giao diện web trực quan hóa pipeline RAG trong thư mục `web/`.
+
+```bash
+# Terminal 1 — backend
+pip install -r requirements.txt
+python -m uvicorn rag_api:app --reload --port 8000
+
+# Terminal 2 — frontend
+cd web && npm install && npm run dev
+```
+
+Chi tiết: `README_RAG_REVEAL.md` hoặc `web/README.md`.
 
 ---
 

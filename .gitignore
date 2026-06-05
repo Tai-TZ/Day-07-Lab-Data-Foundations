@@ -8,6 +8,12 @@ __pycache__/
 .env
 .env.local
 
+# Frontend (web/)
+web/node_modules/
+web/dist/
+web/.env
+web/.env.local
+
 # OS
 .DS_Store
 
@@ -17,3 +23,7 @@ __pycache__/
 .omx/
 .venv/
 src_w_solution/
+
+# User-uploaded documents (runtime only)
+data/uploads/*
+!data/uploads/.gitkeep
